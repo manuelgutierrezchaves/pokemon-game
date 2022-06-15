@@ -18,12 +18,15 @@ class pokemon():
         self.hp = self.max_hp
         self.attack = self.attack * 1.6
 
-    def cure(self, cantidad):
-        self.hp = self.max_hp if self.hp + cantidad > self.max_hp else self.hp + cantidad           
+    def cure(self, quantity):
+        self.hp = self.max_hp if self.hp + quantity > self.max_hp else self.hp + quantity           
 
+    def __del__(self): #Death message
+        print(self.name + "  has died.")
 
 
 #-------------------Testing-----------------------
 poke = pokemon("Nidalee")
 poke.cure(100)
 print(poke)
+del poke
