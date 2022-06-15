@@ -12,7 +12,7 @@ class pokemon():
         self.hp = self.max_hp
         self.attack = 30
         self.name_validation()
-
+        self.alive = 1
 
     def name_validation(self):
         if self.name not in self.names_used:
@@ -32,12 +32,13 @@ class pokemon():
     def cure(self, quantity):
         self.hp = self.max_hp if self.hp + quantity > self.max_hp else self.hp + quantity           
 
-    def __del__(self): #Death message
+    def death(self): 
         print(self.name + "  has died.")
+        self.alive = 0
 
 
 #-------------------Testing-----------------------
 poke = pokemon("Nidalee")
-poke.cure(100)
+poke2 = pokemon("Nidalee")
 print(poke)
-del poke
+print(poke2)
