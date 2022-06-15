@@ -3,8 +3,6 @@ import random
 
 class pokemon():
 
-    names_used = []
-
     def __init__(self, name):
         self.name = name
         self.type = random.choice(["Water", "Fire", "Grass"])
@@ -28,9 +26,35 @@ class pokemon():
         print(self.name + "  has died.")
         self.alive = 0
 
+class battle():
+
+    def __init__(self, pokemon1, pokemon2):
+        self.pokemon1 = pokemon1
+        self.pokemon2 = pokemon2
+
+    def attack(self, attacker):
+        if attacker == 1: 
+            self.pokemon2.hp = self.pokemon2.hp - self.pokemon1.attack
+            if self.pokemon2.hp <= 0: self.pokemon2.death()
+        if attacker == 2:
+            self.pokemon1.hp = self.pokemon1.hp - self.pokemon2.attack
+            if self.pokemon1.hp <= 0: self.pokemon1.death()
+
+
+
+
+
 
 #-------------------Testing-----------------------
-poke = pokemon("Nidalee")
-poke2 = pokemon("Nidalee")
-print(poke)
+poke1 = pokemon("Nidalee")
+poke2 = pokemon("Rengar")
+print(poke1)
+print(poke2)
+battle1 = battle(poke1, poke2)
+battle1.attack(1)
+battle1.attack(1)
+battle1.attack(1)
+battle1.attack(1)
+battle1.attack(2)
+print(poke1)
 print(poke2)
