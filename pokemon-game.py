@@ -10,8 +10,21 @@ class pokemon():
         self.attack = 30
 
     def __str__(self):
-        text = self.name + " " + self.hp
-        return text
+        return self.name + ", Type: " + self.type + ", HP: " + str(round(self.hp))
+
+    def evolution(self):
+        self.hp = self.hp * 1.6
+        self.attack = self.attack * 1.6
+
+    
 
 
 
+
+
+
+#-------------------Testing-----------------------
+poke1 = pokemon("Nidalee")
+print(poke1)
+poke1.evolution()
+print(poke1)
