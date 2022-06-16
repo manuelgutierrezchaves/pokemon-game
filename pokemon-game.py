@@ -11,7 +11,7 @@ class pokemon():
         self.max_hp = 100
         self.hp = self.max_hp
         self.attack = 30
-        self.alive = 1
+        self.alive = True
 
     def __str__(self):
         return self.name + ", Type: " + self.type + ", HP: " + str(round(self.hp))
@@ -26,7 +26,7 @@ class pokemon():
 
     def death(self): 
         print(self.name + "  has died.")
-        self.alive = 0
+        self.alive = False
 
 
 #-------------------Testing-----------------------
