@@ -7,7 +7,7 @@ class pokemon():
         self.name = name
         self.type = random.choice(["Water", "Fire", "Grass"])
         self.max_hp = 100
-        self.hp = self.max_hp
+        self.hp = self.max_hp #Health points
         self.attack = 30
         self.alive = True
 
@@ -34,7 +34,7 @@ class battle():
 
     def attack(self, attacker):
         if attacker == 1: 
-            self.pokemon2.hp = self.pokemon2.hp - self.pokemon1.attack
+            self.pokemon2.hp -= self.pokemon1.attack
             if self.pokemon2.hp <= 0: self.pokemon2.death()
         if attacker == 2:
             self.pokemon1.hp = self.pokemon1.hp - self.pokemon2.attack
