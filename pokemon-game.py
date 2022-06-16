@@ -41,18 +41,16 @@ class battle():
             if self.pokemon1.hp <= 0: self.pokemon1.death()
     
     def __str__(self):
-        string = "Pokemon 1: " + str(self.pokemon1) + ", Pokemon 2: " + str(self.pokemon1)
+        string = "Pokemon 1: " + str(self.pokemon1) + "\t Pokemon 2: " + str(self.pokemon2)
         return string
 
 def battle_fun(pokemon1, pokemon2):
     battle1 = battle(pokemon1, pokemon2)
+    i=1
     while pokemon1.alive and pokemon2.alive == True:
-        battle1.attack(1)
-        if pokemon2.hp <= 0: pokemon2.death()
         print(battle1)
-        battle1.attack(2)
-        if pokemon1.hp <= 0: pokemon1.death()
-        print(battle1)
+        battle1.attack((i%2)+1)
+        i += 1
 
 
 
