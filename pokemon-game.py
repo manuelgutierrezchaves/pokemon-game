@@ -43,6 +43,9 @@ class battle():
     def __str__(self):
         string = "Pokemon 1: " + str(self.pokemon1) + "\t Pokemon 2: " + str(self.pokemon2)
         return string
+    
+    def winner(self):
+        print("The winner is " + self.pokemon1.name) if self.pokemon1.alive == True else print("The winner is " + self.pokemon2.name)
 
 def battle_fun(pokemon1, pokemon2):
     battle1 = battle(pokemon1, pokemon2)
@@ -51,6 +54,8 @@ def battle_fun(pokemon1, pokemon2):
         print(battle1)
         battle1.attack((i%2)+1)
         i += 1
+    battle1.winner()
+
 
 
 
