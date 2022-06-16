@@ -25,6 +25,11 @@ class pokemon():
     def death(self): 
         print(self.name + "  has died.")
         self.alive = False
+        self.hp = 0
+
+    def revive(self, quantity):
+        self.hp = self.max_hp if quantity > self.max_hp else quantity
+        self.alive = True
 
 class battle():
 
@@ -66,7 +71,13 @@ def battle_fun(pokemon1, pokemon2):
 
 
 #-------------------Testing-----------------------
-poke1 = pokemon("Nidalee")
-poke2 = pokemon("Rengar")
-battle_instance = battle_fun(poke1, poke2)
+# poke1 = pokemon("Nidalee")
+# poke2 = pokemon("Rengar")
+# battle_instance = battle_fun(poke1, poke2)
 
+poke1 = pokemon("Nidalee")
+print(poke1)
+poke1.death()
+print(poke1)
+poke1.revive(200)
+print(poke1)
