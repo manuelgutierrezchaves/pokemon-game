@@ -6,20 +6,20 @@ class pokemon():
     def __init__(self, name):
         self.name = name
         self.type = random.choice(["Water", "Fire", "Grass"])
-        self.max_hp = 100
+        self.max_hp = random.randint(90, 110)
         self.hp = self.max_hp #Health points
-        self.attack = 30
+        self.attack = random.randint(20, 40)
         self.alive = True
 
     def __str__(self):
         return self.name + ", Type: " + self.type + ", HP: " + str(round(self.hp))
 
     def evolution(self):
-        self.max_hp = self.max_hp * 1.6
+        self.max_hp *= 1.6
         self.hp = self.max_hp
-        self.attack = self.attack * 1.6
+        self.attack *= 1.6
 
-    def cure(self, quantity):
+    def feed(self, quantity):
         self.hp = self.max_hp if self.hp + quantity > self.max_hp else self.hp + quantity           
 
     def death(self): 
@@ -35,9 +35,12 @@ class battle():
     def attack(self, attacker):
         if attacker == 1: 
             self.pokemon2.hp -= self.pokemon1.attack
+            print(self.pokemon1.name + " hits " + self.pokemon2.name + " for " + str(self.pokemon1.attack) + " points.")
             if self.pokemon2.hp <= 0: self.pokemon2.death()
+            
         if attacker == 2:
-            self.pokemon1.hp = self.pokemon1.hp - self.pokemon2.attack
+            self.pokemon1.hp -= self.pokemon2.attack
+            print(self.pokemon2.name + " hits " + self.pokemon1.name + " for " + str(self.pokemon2.attack) + " points.")
             if self.pokemon1.hp <= 0: self.pokemon1.death()
     
     def __str__(self):
@@ -48,13 +51,13 @@ class battle():
         print("The winner is " + self.pokemon1.name) if self.pokemon1.alive == True else print("The winner is " + self.pokemon2.name)
 
 def battle_fun(pokemon1, pokemon2):
-    battle1 = battle(pokemon1, pokemon2)
+    battle_instance = battle(pokemon1, pokemon2)
     i=1
     while pokemon1.alive and pokemon2.alive == True:
-        print(battle1)
-        battle1.attack((i%2)+1)
+        print(battle_instance)
+        battle_instance.attack((i%2)+1)
         i += 1
-    battle1.winner()
+    battle_instance.winner()
 
 
 
@@ -65,5 +68,5 @@ def battle_fun(pokemon1, pokemon2):
 #-------------------Testing-----------------------
 poke1 = pokemon("Nidalee")
 poke2 = pokemon("Rengar")
-battle1 = battle_fun(poke1, poke2)
+battle_instance = battle_fun(poke1, poke2)
 
