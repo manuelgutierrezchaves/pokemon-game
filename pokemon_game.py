@@ -64,20 +64,41 @@ def battle_fun(pokemon1, pokemon2):
         i += 1
     battle_instance.winner()
 
+def main_menu(pokemon_owned):
 
+    option = input("1 - New Pokemon\n2 - Fight \n3 - Feed\n4 - Revive\n5 - Exit menu\n\nEnter number: ")
+    if option == "1": #Add new Pokemon
+        name = input("Name: ")
+        pokemon_owned.append(pokemon(name)) 
+        print("New pokemon added.")
+    elif option == "2": #Fighting
+        name_to_find = input("Which Pokemon do you choose to fight?: ")
+        user_pokemon = next((pokemon_to_fight for pokemon_to_fight in pokemon_owned if pokemon_to_fight.name == name_to_find), None)
+        enemy_pokemon = pokemon("Random")
+        battle_fun(user_pokemon, enemy_pokemon)
 
+    elif option == "3": #Feed Pokemon
+        name_to_find = input("Which Pokemon do you want to feed?: ")
+        user_pokemon = next((pokemon_to_feed for pokemon_to_feed in pokemon_owned if pokemon_to_feed.name == name_to_find), None)
+        user_pokemon.feed(25)
+        print(user_pokemon.name + "'s HP is now: " + str(user_pokemon.hp) + "/" + str(user_pokemon.max_hp))
 
+    elif option == "4": #Revive Pokemon
+        name_to_find = input("Which Pokemon do you want to revive?: ")
+        user_pokemon = next((pokemon_to_revive for pokemon_to_revive in pokemon_owned if pokemon_to_revive.name == name_to_find), None)
+        user_pokemon.revive(75)
+        print(user_pokemon.name + "'s HP is now: " + str(user_pokemon.hp) + "/" + str(user_pokemon.max_hp))
 
+    elif option == "5": #Exit
+        global run
+        run = False
+
+    return pokemon_owned
 
 
 #-------------------Testing-----------------------
-# poke1 = pokemon("Nidalee")
-# poke2 = pokemon("Rengar")
-# battle_instance = battle_fun(poke1, poke2)
-
-poke1 = pokemon("Nidalee")
-print(poke1)
-poke1.death()
-print(poke1)
-poke1.revive(200)
-print(poke1)
+pokemon_owned = []
+run = True
+while run:
+    pokemon_owned = main_menu(pokemon_owned)
+    print([i.hp for i in pokemon_owned])
