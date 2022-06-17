@@ -1,4 +1,6 @@
 import random
+import pandas as pd
+df = pd.read_csv("damage_multiplier.csv")
 
 
 class pokemon():
@@ -12,12 +14,12 @@ class pokemon():
         self.alive = True
 
     def __str__(self):
-        return self.name + ", HP: " + str(round(self.hp)) + "/" + str(self.max_hp)
+        return self.name + ", HP: " + str(self.hp) + "/" + str(self.max_hp)
 
     def evolution(self): #Not in use
-        self.max_hp *= 1.6
+        self.max_hp *= 1.6 #Needs rounding
         self.hp = self.max_hp
-        self.attack *= 1.6
+        self.attack *= 1.6 #Needs rounding
 
     def feed(self, quantity):
         if self.alive:
@@ -47,13 +49,17 @@ class battle():
 
     def attack(self, attacker):
         if attacker == 1: 
-            self.pokemon2.hp -= self.pokemon1.attack
-            print(self.pokemon1.name + " hits " + self.pokemon2.name + " for " + str(self.pokemon1.attack) + " points.")
+            multiplier = df[(df['Attacker']==self.pokemon1.type) & (df['Defender']==self.pokemon2.type)]['Multiplier'].values[0]
+            damage = round(self.pokemon1.attack * multiplier)
+            self.pokemon2.hp -= damage
+            print(self.pokemon1.name + " hits " + self.pokemon2.name + " for " + str(damage) + " points.")
             if self.pokemon2.hp <= 0: self.pokemon2.death()
             
         if attacker == 2:
-            self.pokemon1.hp -= self.pokemon2.attack
-            print(self.pokemon2.name + " hits " + self.pokemon1.name + " for " + str(self.pokemon2.attack) + " points.")
+            multiplier = df[(df['Attacker']==self.pokemon2.type) & (df['Defender']==self.pokemon1.type)]['Multiplier'].values[0]
+            damage = round(self.pokemon2.attack * multiplier)
+            self.pokemon1.hp -= damage
+            print(self.pokemon2.name + " hits " + self.pokemon1.name + " for " + str(damage) + " points.")
             if self.pokemon1.hp <= 0: self.pokemon1.death()
     
     def __str__(self):
@@ -113,9 +119,16 @@ def main_menu(pokemon_owned):
     return pokemon_owned
 
 
+#-------------------Main-----------------------
+# pokemon_owned = []
+# run = True
+# while run:
+#     pokemon_owned = main_menu(pokemon_owned)
+#     print([i.hp for i in pokemon_owned])
+
 #-------------------Testing-----------------------
-pokemon_owned = []
-run = True
-while run:
-    pokemon_owned = main_menu(pokemon_owned)
-    print([i.hp for i in pokemon_owned])
+pok1 = pokemon("Nidalee")
+pok2 = pokemon("Rengar")
+print(pok1.type + str(pok1.attack))
+print(pok2.type + str(pok2.attack))
+battle_fun(pok1, pok2)

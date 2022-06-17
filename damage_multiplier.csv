@@ -1,0 +1,10 @@
+Attacker,Defender,Multiplier
+Water,Grass,0.5
+Water,Water,1
+Water,Fire,2
+Grass,Grass,1
+Grass,Water,2
+Grass,Fire,0.5
+Fire,Grass,2
+Fire,Water,0.5
+Fire,Fire,1
