@@ -12,15 +12,19 @@ class pokemon():
         self.alive = True
 
     def __str__(self):
-        return self.name + ", Type: " + self.type + ", HP: " + str(round(self.hp))
+        return self.name + ", HP: " + str(round(self.hp)) + "/" + str(self.max_hp)
 
-    def evolution(self):
+    def evolution(self): #Not in use
         self.max_hp *= 1.6
         self.hp = self.max_hp
         self.attack *= 1.6
 
     def feed(self, quantity):
-        self.hp = self.max_hp if self.hp + quantity > self.max_hp else self.hp + quantity           
+        if self.alive:
+            self.hp = self.max_hp if self.hp + quantity > self.max_hp else self.hp + quantity
+            print(self.name + "'s HP is now: " + str(self.hp) + "/" + str(self.max_hp))
+        else:
+            print(self.name + "'s dead. Try reviving.")
 
     def death(self): 
         print(self.name + "  has died.")
@@ -28,8 +32,12 @@ class pokemon():
         self.hp = 0
 
     def revive(self, quantity):
-        self.hp = self.max_hp if quantity > self.max_hp else quantity
-        self.alive = True
+        if not self.alive:
+            self.hp = self.max_hp if quantity > self.max_hp else quantity
+            self.alive = True
+            print(self.name + "'s HP is now: " + str(self.hp) + "/" + str(self.max_hp))
+        else:
+            print(self.name + "'s already alive.")
 
 class battle():
 
@@ -56,20 +64,24 @@ class battle():
         print("The winner is " + self.pokemon1.name) if self.pokemon1.alive == True else print("The winner is " + self.pokemon2.name)
 
 def battle_fun(pokemon1, pokemon2):
-    battle_instance = battle(pokemon1, pokemon2)
-    i=1
-    while pokemon1.alive and pokemon2.alive == True:
-        print(battle_instance)
-        battle_instance.attack((i%2)+1)
-        i += 1
-    battle_instance.winner()
+    if pokemon1.alive and pokemon2.alive:
+
+        battle_instance = battle(pokemon1, pokemon2)
+        i=1
+        while pokemon1.alive and pokemon2.alive == True:
+            print(battle_instance)
+            battle_instance.attack((i%2)+1)
+            i += 1
+        battle_instance.winner()
+    else:
+        print("One or both Pokemons are dead.")
 
 def main_menu(pokemon_owned):
 
     option = input("1 - New Pokemon\n2 - Fight \n3 - Feed\n4 - Revive\n5 - Exit menu\n\nEnter number: ")
     if option == "1": #Add new Pokemon
         name = input("Name: ")
-        if next((pokemon_to_add for pokemon_to_add in pokemon_owned if pokemon_to_add.name == name), None) == None:
+        if next((pokemon_to_add for pokemon_to_add in pokemon_owned if pokemon_to_add.name == name), None) == None: #Check if name already in use
             pokemon_owned.append(pokemon(name))
             print("New pokemon added.")
         else:
@@ -85,13 +97,11 @@ def main_menu(pokemon_owned):
         name_to_find = input("Which Pokemon do you want to feed?: ")
         user_pokemon = next((pokemon_to_feed for pokemon_to_feed in pokemon_owned if pokemon_to_feed.name == name_to_find), None)
         user_pokemon.feed(25)
-        print(user_pokemon.name + "'s HP is now: " + str(user_pokemon.hp) + "/" + str(user_pokemon.max_hp))
 
     elif option == "4": #Revive Pokemon
         name_to_find = input("Which Pokemon do you want to revive?: ")
         user_pokemon = next((pokemon_to_revive for pokemon_to_revive in pokemon_owned if pokemon_to_revive.name == name_to_find), None)
         user_pokemon.revive(75)
-        print(user_pokemon.name + "'s HP is now: " + str(user_pokemon.hp) + "/" + str(user_pokemon.max_hp))
 
     elif option == "5": #Exit
         global run
