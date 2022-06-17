@@ -93,6 +93,9 @@ def main_menu(pokemon_owned):
         global run
         run = False
 
+    else:
+        print("Try again...")
+        
     return pokemon_owned
 
 
