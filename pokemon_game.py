@@ -69,10 +69,14 @@ def main_menu(pokemon_owned):
     option = input("1 - New Pokemon\n2 - Fight \n3 - Feed\n4 - Revive\n5 - Exit menu\n\nEnter number: ")
     if option == "1": #Add new Pokemon
         name = input("Name: ")
-        pokemon_owned.append(pokemon(name)) 
-        print("New pokemon added.")
+        if next((pokemon_to_add for pokemon_to_add in pokemon_owned if pokemon_to_add.name == name), None) == None:
+            pokemon_owned.append(pokemon(name))
+            print("New pokemon added.")
+        else:
+            print("Name already in use.")
+
     elif option == "2": #Fighting
-        name_to_find = input("Which Pokemon do you choose to fight?: ")
+        name_to_find = input("Which Pokemon do you choose for the fight?: ")
         user_pokemon = next((pokemon_to_fight for pokemon_to_fight in pokemon_owned if pokemon_to_fight.name == name_to_find), None)
         enemy_pokemon = pokemon("Random")
         battle_fun(user_pokemon, enemy_pokemon)
@@ -95,7 +99,7 @@ def main_menu(pokemon_owned):
 
     else:
         print("Try again...")
-        
+
     return pokemon_owned
 
 
