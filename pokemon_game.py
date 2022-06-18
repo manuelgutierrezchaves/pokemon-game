@@ -75,9 +75,35 @@ class battle():
         print("The winner is " + self.pokemon1.name) if self.pokemon1.alive == True else print("The winner is " + self.pokemon2.name)
 
 def battle_fun(pokemon1, pokemon2):
+    run_battle = True
     if pokemon1.alive and pokemon2.alive:
 
         battle_instance = battle(pokemon1, pokemon2)
+
+        i = 1
+        while pokemon1.alive and pokemon2.alive and run_battle == True:
+            if i%2 == 1:
+                option = input("1 - Attack\n2 - Feed\n3 - Exit battle\n\nEnter number: ")
+                if option == "1":
+                    option_move = input("Choose move: (" + pokemon1.moves[0].get("Name") + "/" + pokemon1.moves[1].get("Name") + "): ")
+                    if option_move in [pokemon1.moves[0].get("Name"), pokemon1.moves[1].get("Name")]:
+                        battle_instance.attack(1)
+                        print(pokemon1.moves[1].get("Name"))
+                    else:
+                        print("Choose a valid move.")
+                
+                elif option == "2":
+                    pokemon1.feed(25)
+                
+                elif option == "3":
+                    run_battle = False
+                
+                else:
+                    print("Try again...")
+            else:
+                battle_instance.attack(2)
+            
+            i += 1
 
 
 
@@ -86,11 +112,11 @@ def battle_fun(pokemon1, pokemon2):
 
 
         
-        i=1
-        while pokemon1.alive and pokemon2.alive == True:
-            print(battle_instance)
-            battle_instance.attack((i%2)+1)
-            i += 1
+        # i=1
+        # while pokemon1.alive and pokemon2.alive == True:
+        #     print(battle_instance)
+        #     battle_instance.attack((i%2)+1)
+        #     i += 1
 
 
 
@@ -156,22 +182,20 @@ def main_menu(pokemon_owned):
 
 
 #-------------------Main-----------------------
-clear()
-first_poke = input("Choose a name for your first Pokemon: ")
-clear()
-pokemon_owned = [pokemon(first_poke)]
+# clear()
+# first_poke = input("Choose a name for your first Pokemon: ")
+# clear()
+# pokemon_owned = [pokemon(first_poke)]
 
-run = True
-while run:
-    pokemon_owned = main_menu(pokemon_owned)
-    print("\n\n")
+# run = True
+# while run:
+#     pokemon_owned = main_menu(pokemon_owned)
+#     print("\n\n")
 #----------------------------------------------
 
 
 
 #-------------------Testing-----------------------
-# pok1 = pokemon("Nidalee")
-# pok2 = pokemon("Rengar")
-# print(pok1.type + str(pok1.attack))
-# print(pok2.type + str(pok2.attack))
-# battle_fun(pok1, pok2)
+pok1 = pokemon("Nidalee")
+pok2 = pokemon("Rengar")
+battle_fun(pok1, pok2)
