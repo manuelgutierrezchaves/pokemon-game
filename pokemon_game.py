@@ -2,7 +2,7 @@ import os
 clear = lambda: os.system('clear')
 import random
 import pandas as pd
-df = pd.read_csv("damage_multiplier.csv")
+damage_df = pd.read_csv("damage_multiplier.csv")
 
 
 class pokemon():
@@ -51,14 +51,14 @@ class battle():
 
     def attack(self, attacker):
         if attacker == 1: 
-            multiplier = df[(df['Attacker']==self.pokemon1.type) & (df['Defender']==self.pokemon2.type)]['Multiplier'].values[0]
+            multiplier = damage_df[(damage_df['Attacker']==self.pokemon1.type) & (damage_df['Defender']==self.pokemon2.type)]['Multiplier'].values[0]
             damage = round(self.pokemon1.attack * multiplier)
             self.pokemon2.hp -= damage
             print(self.pokemon1.name + " hits " + self.pokemon2.name + " for " + str(damage) + " points.")
             if self.pokemon2.hp <= 0: self.pokemon2.death()
             
         if attacker == 2:
-            multiplier = df[(df['Attacker']==self.pokemon2.type) & (df['Defender']==self.pokemon1.type)]['Multiplier'].values[0]
+            multiplier = damage_df[(damage_df['Attacker']==self.pokemon2.type) & (damage_df['Defender']==self.pokemon1.type)]['Multiplier'].values[0]
             damage = round(self.pokemon2.attack * multiplier)
             self.pokemon1.hp -= damage
             print(self.pokemon2.name + " hits " + self.pokemon1.name + " for " + str(damage) + " points.")
@@ -86,7 +86,7 @@ def battle_fun(pokemon1, pokemon2):
 
 def main_menu(pokemon_owned):
 
-    option = input("1 - New Pokemon\n2 - Fight \n3 - Feed\n4 - Revive\n5 - Exit menu\n\nEnter number: ")
+    option = input("1 - New Pokemon\n2 - View Pokemons\n3 - Fight \n4 - Feed\n5 - Revive\n6 - Exit menu\n\nEnter number: ")
     clear()
     if option == "1": #Add new Pokemon
         name = input("Name: ")
@@ -98,26 +98,29 @@ def main_menu(pokemon_owned):
         else:
             print("Name already in use.")
 
-    elif option == "2": #Fighting
+    elif option == "2": #Show pokemons in store
+        for poke in pokemon_owned: print(poke.name + "\t\tType: " + poke.type + "\tAttack: " + str(poke.attack) + "\tHP: " + str(poke.hp) + "/" + str(poke.max_hp))
+
+    elif option == "3": #Fighting
         name_to_find = input("Which Pokemon do you choose for the fight?: ")
         clear()
         user_pokemon = next((pokemon_to_fight for pokemon_to_fight in pokemon_owned if pokemon_to_fight.name == name_to_find), None)
         enemy_pokemon = pokemon("Random")
         battle_fun(user_pokemon, enemy_pokemon)
 
-    elif option == "3": #Feed Pokemon
+    elif option == "4": #Feed Pokemon
         name_to_find = input("Which Pokemon do you want to feed?: ")
         clear()
         user_pokemon = next((pokemon_to_feed for pokemon_to_feed in pokemon_owned if pokemon_to_feed.name == name_to_find), None)
         user_pokemon.feed(25)
 
-    elif option == "4": #Revive Pokemon
+    elif option == "5": #Revive Pokemon
         name_to_find = input("Which Pokemon do you want to revive?: ")
         clear()
         user_pokemon = next((pokemon_to_revive for pokemon_to_revive in pokemon_owned if pokemon_to_revive.name == name_to_find), None)
         user_pokemon.revive(75)
 
-    elif option == "5": #Exit
+    elif option == "6": #Exit
         global run
         run = False
 
@@ -129,7 +132,8 @@ def main_menu(pokemon_owned):
 
 #-------------------Main-----------------------
 clear()
-pokemon_owned = []
+pokemon_owned = [pokemon("Nidalee"), pokemon("Rengar")]
+
 run = True
 while run:
     pokemon_owned = main_menu(pokemon_owned)
