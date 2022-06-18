@@ -1,3 +1,5 @@
+import os
+clear = lambda: os.system('clear')
 import random
 import pandas as pd
 df = pd.read_csv("damage_multiplier.csv")
@@ -85,27 +87,33 @@ def battle_fun(pokemon1, pokemon2):
 def main_menu(pokemon_owned):
 
     option = input("1 - New Pokemon\n2 - Fight \n3 - Feed\n4 - Revive\n5 - Exit menu\n\nEnter number: ")
+    clear()
     if option == "1": #Add new Pokemon
         name = input("Name: ")
+        clear()
         if next((pokemon_to_add for pokemon_to_add in pokemon_owned if pokemon_to_add.name == name), None) == None: #Check if name already in use
-            pokemon_owned.append(pokemon(name))
-            print("New pokemon added.")
+            new_pokemon = pokemon(name)
+            pokemon_owned.append(new_pokemon)
+            print("New pokemon: " + new_pokemon.name + "\nType: " + new_pokemon.type + "\nAttack: " + str(new_pokemon.attack) + "\nHP: " + str(new_pokemon.hp) + "/" + str(new_pokemon.max_hp))
         else:
             print("Name already in use.")
 
     elif option == "2": #Fighting
         name_to_find = input("Which Pokemon do you choose for the fight?: ")
+        clear()
         user_pokemon = next((pokemon_to_fight for pokemon_to_fight in pokemon_owned if pokemon_to_fight.name == name_to_find), None)
         enemy_pokemon = pokemon("Random")
         battle_fun(user_pokemon, enemy_pokemon)
 
     elif option == "3": #Feed Pokemon
         name_to_find = input("Which Pokemon do you want to feed?: ")
+        clear()
         user_pokemon = next((pokemon_to_feed for pokemon_to_feed in pokemon_owned if pokemon_to_feed.name == name_to_find), None)
         user_pokemon.feed(25)
 
     elif option == "4": #Revive Pokemon
         name_to_find = input("Which Pokemon do you want to revive?: ")
+        clear()
         user_pokemon = next((pokemon_to_revive for pokemon_to_revive in pokemon_owned if pokemon_to_revive.name == name_to_find), None)
         user_pokemon.revive(75)
 
@@ -120,15 +128,20 @@ def main_menu(pokemon_owned):
 
 
 #-------------------Main-----------------------
-# pokemon_owned = []
-# run = True
-# while run:
-#     pokemon_owned = main_menu(pokemon_owned)
-#     print([i.hp for i in pokemon_owned])
+clear()
+pokemon_owned = []
+run = True
+while run:
+    pokemon_owned = main_menu(pokemon_owned)
+    print("\n\n")
+    # print([i.hp for i in pokemon_owned])
+#----------------------------------------------
+
+
 
 #-------------------Testing-----------------------
-pok1 = pokemon("Nidalee")
-pok2 = pokemon("Rengar")
-print(pok1.type + str(pok1.attack))
-print(pok2.type + str(pok2.attack))
-battle_fun(pok1, pok2)
+# pok1 = pokemon("Nidalee")
+# pok2 = pokemon("Rengar")
+# print(pok1.type + str(pok1.attack))
+# print(pok2.type + str(pok2.attack))
+# battle_fun(pok1, pok2)
