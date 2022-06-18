@@ -96,9 +96,9 @@ def main_menu(pokemon_owned):
             pokemon_owned.append(new_pokemon)
             print("New pokemon: " + new_pokemon.name + "\nType: " + new_pokemon.type + "\nAttack: " + str(new_pokemon.attack) + "\nHP: " + str(new_pokemon.hp) + "/" + str(new_pokemon.max_hp))
         else:
-            print("Name already in use.")
+            print("Name already used.")
 
-    elif option == "2": #Show pokemons in store
+    elif option == "2": #Show pokemons
         for poke in pokemon_owned: print(poke.name + "\t\tType: " + poke.type + "\tAttack: " + str(poke.attack) + "\tHP: " + str(poke.hp) + "/" + str(poke.max_hp))
 
     elif option == "3": #Fighting
@@ -132,7 +132,9 @@ def main_menu(pokemon_owned):
 
 #-------------------Main-----------------------
 clear()
-pokemon_owned = [pokemon("Nidalee"), pokemon("Rengar")]
+first_poke = input("Choose a name for your first Pokemon: ")
+clear()
+pokemon_owned = [pokemon(first_poke)]
 
 run = True
 while run:
