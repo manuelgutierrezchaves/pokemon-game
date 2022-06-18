@@ -11,9 +11,9 @@ class pokemon():
     def __init__(self, name):
         self.name = name
         self.type = random.choice(["Water", "Fire", "Grass"])
-        self.max_hp = random.randint(90, 110)
+        self.max_hp = random.randint(300, 400)
         self.hp = self.max_hp #Health points
-        self.attack = random.randint(20, 40)
+        self.attack = random.randint(90, 110)
         self.alive = True
         first_moves = moves_df.sample(2)
         self.moves = [{"Name": first_moves["Name"].values[0], "Type": first_moves["Type"].values[0], "Power": first_moves["Power"].values[0]}, {"Name": first_moves["Name"].values[1], "Type": first_moves["Type"].values[1], "Power": first_moves["Power"].values[1]}]
@@ -83,14 +83,16 @@ def battle_fun(pokemon1, pokemon2):
         i = 1
         while pokemon1.alive and pokemon2.alive and run_battle == True:
             if i%2 == 1:
-                option = input("1 - Attack\n2 - Feed\n3 - Exit battle\n\nEnter number: ")
+                option = input("\n\n1 - Attack\n2 - Feed\n3 - Exit battle\n\nEnter number: ")
+                clear()
                 if option == "1":
                     option_move = input("Choose move: (" + pokemon1.moves[0].get("Name") + "/" + pokemon1.moves[1].get("Name") + "): ")
+                    clear()
                     if option_move in [pokemon1.moves[0].get("Name"), pokemon1.moves[1].get("Name")]:
                         battle_instance.attack(1)
-                        print(pokemon1.moves[1].get("Name"))
                     else:
                         print("Choose a valid move.")
+                        i -= 1
                 
                 elif option == "2":
                     pokemon1.feed(25)
@@ -100,39 +102,13 @@ def battle_fun(pokemon1, pokemon2):
                 
                 else:
                     print("Try again...")
+                    i -= 1
             else:
                 battle_instance.attack(2)
             
             i += 1
 
-
-
-
-
-
-
-        
-        # i=1
-        # while pokemon1.alive and pokemon2.alive == True:
-        #     print(battle_instance)
-        #     battle_instance.attack((i%2)+1)
-        #     i += 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        battle_instance.winner()
+        print("Battle finished.") if pokemon1.alive and pokemon2.alive == True else battle_instance.winner()
     else:
         print("One or both Pokemons are dead.")
 
