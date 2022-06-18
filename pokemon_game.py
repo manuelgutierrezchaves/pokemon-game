@@ -3,6 +3,7 @@ clear = lambda: os.system('clear')
 import random
 import pandas as pd
 damage_df = pd.read_csv("damage_multiplier.csv")
+moves_df = pd.read_csv("move_sets.csv")
 
 
 class pokemon():
@@ -14,6 +15,8 @@ class pokemon():
         self.hp = self.max_hp #Health points
         self.attack = random.randint(20, 40)
         self.alive = True
+        first_moves = moves_df.sample(2)
+        self.moves = [{"Name": first_moves["Name"].values[0], "Type": first_moves["Type"].values[0], "Power": first_moves["Power"].values[0]}, {"Name": first_moves["Name"].values[1], "Type": first_moves["Type"].values[1], "Power": first_moves["Power"].values[1]}]
 
     def __str__(self):
         return self.name + ", HP: " + str(self.hp) + "/" + str(self.max_hp)
@@ -75,11 +78,34 @@ def battle_fun(pokemon1, pokemon2):
     if pokemon1.alive and pokemon2.alive:
 
         battle_instance = battle(pokemon1, pokemon2)
+
+
+
+
+
+
+
+        
         i=1
         while pokemon1.alive and pokemon2.alive == True:
             print(battle_instance)
             battle_instance.attack((i%2)+1)
             i += 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         battle_instance.winner()
     else:
         print("One or both Pokemons are dead.")
@@ -99,14 +125,13 @@ def main_menu(pokemon_owned):
             print("Name already used.")
 
     elif option == "2": #Show pokemons
-        for poke in pokemon_owned: print(poke.name + "\t\tType: " + poke.type + "\tAttack: " + str(poke.attack) + "\tHP: " + str(poke.hp) + "/" + str(poke.max_hp))
+        for poke in pokemon_owned: print(poke.name + "\t\tType: " + poke.type + "\tAttack: " + str(poke.attack) + "\tHP: " + str(poke.hp) + "/" + str(poke.max_hp) + "\tMoves: " + poke.moves[0].get("Name") + " & " + poke.moves[1].get("Name"))
 
     elif option == "3": #Fighting
         name_to_find = input("Which Pokemon do you choose for the fight?: ")
         clear()
         user_pokemon = next((pokemon_to_fight for pokemon_to_fight in pokemon_owned if pokemon_to_fight.name == name_to_find), None)
-        enemy_pokemon = pokemon("Random")
-        battle_fun(user_pokemon, enemy_pokemon)
+        battle_fun(user_pokemon, pokemon("Random"))
 
     elif option == "4": #Feed Pokemon
         name_to_find = input("Which Pokemon do you want to feed?: ")
@@ -140,7 +165,6 @@ run = True
 while run:
     pokemon_owned = main_menu(pokemon_owned)
     print("\n\n")
-    # print([i.hp for i in pokemon_owned])
 #----------------------------------------------
 
 
