@@ -6,6 +6,33 @@ damage_df = pd.read_csv("damage_multiplier.csv")
 moves_df = pd.read_csv("move_sets.csv")
 
 
+class character():
+
+    def __init__(self, name):
+        self.name = name
+        self.pokemon_bag = []
+        self.item_bag = []
+
+    def add_pokemon(self):
+        name = input("Name: ")
+        clear()
+        if next((pokemon_to_add for pokemon_to_add in self.pokemon_bag if pokemon_to_add.name == name), None) == None: #Check if name already in use
+            new_pokemon = pokemon(name)
+            self.pokemon_bag.append(new_pokemon)
+            print("Name: {0.name}\nType: {0.type}\nAttack: {0.attack}\nHP: {0.hp}/{0.max_hp}".format(new_pokemon))
+            input("\nPress enter to continue.")
+            clear()
+        else:
+            print("Name already used.")
+            input("\nPress enter to continue.")
+            clear()
+
+    def show_pokemons(self):
+        for poke in self.pokemon_bag: print("{0.name}\t\tType: {0.type}\tAttack: {0.attack}\tHP: {0.hp}/{0.max_hp}\tMoves: {1} & {2}".format(poke, poke.moves[0].get("Name"), poke.moves[1].get("Name")))
+        input("\nPress enter to continue.")
+        clear()
+
+
 class pokemon():
 
     def __init__(self, name):
@@ -142,45 +169,32 @@ def battle_fun(pokemon1, pokemon2):
 
 
 
-def main_menu(pokemon_owned):
+def main_menu(player):
 
     option = input("Main Menu\n\n1 - New Pokemon\n2 - View Pokemons\n3 - Fight \n4 - Feed\n5 - Revive\n6 - Exit menu\n\nEnter number: ")
     clear()
     if option == "1": #Add new Pokemon
-        name = input("Name: ")
-        clear()
-        if next((pokemon_to_add for pokemon_to_add in pokemon_owned if pokemon_to_add.name == name), None) == None: #Check if name already in use
-            new_pokemon = pokemon(name)
-            pokemon_owned.append(new_pokemon)
-            print("Name: {0.name}\nType: {0.type}\nAttack: {0.attack}\nHP: {0.hp}/{0.max_hp}".format(new_pokemon))
-            input("\nPress enter to continue.")
-            clear()
-        else:
-            print("Name already used.")
-            input("\nPress enter to continue.")
-            clear()
+        player.add_pokemon()
 
     elif option == "2": #Show pokemons
-        for poke in pokemon_owned: print("{0.name}\t\tType: {0.type}\tAttack: {0.attack}\tHP: {0.hp}/{0.max_hp}\tMoves: {1} & {2}".format(poke, poke.moves[0].get("Name"), poke.moves[1].get("Name")))
-        input("\nPress enter to continue.")
-        clear()
+        player.show_pokemons()
 
     elif option == "3": #Fighting
         name_to_find = input("Which Pokemon do you choose for the fight?: ")
         clear()
-        user_pokemon = next((pokemon_to_fight for pokemon_to_fight in pokemon_owned if pokemon_to_fight.name == name_to_find), None)
+        user_pokemon = next((pokemon_to_fight for pokemon_to_fight in player.pokemon_bag if pokemon_to_fight.name == name_to_find), None)
         battle_fun(user_pokemon, pokemon("Random Pokemon"))
 
     elif option == "4": #Feed Pokemon
         name_to_find = input("Which Pokemon do you want to feed?: ")
         clear()
-        user_pokemon = next((pokemon_to_feed for pokemon_to_feed in pokemon_owned if pokemon_to_feed.name == name_to_find), None)
+        user_pokemon = next((pokemon_to_feed for pokemon_to_feed in player.pokemon_bag if pokemon_to_feed.name == name_to_find), None)
         user_pokemon.feed(25)
 
     elif option == "5": #Revive Pokemon
         name_to_find = input("Which Pokemon do you want to revive?: ")
         clear()
-        user_pokemon = next((pokemon_to_revive for pokemon_to_revive in pokemon_owned if pokemon_to_revive.name == name_to_find), None)
+        user_pokemon = next((pokemon_to_revive for pokemon_to_revive in player.pokemon_bag if pokemon_to_revive.name == name_to_find), None)
         user_pokemon.revive(75)
 
     elif option == "6": #Exit
@@ -190,18 +204,22 @@ def main_menu(pokemon_owned):
     else:
         print("Try again...")
 
-    return pokemon_owned
+    return player
 
 
 #-------------------Main-----------------------
 clear()
-first_poke = input("Choose a name for your first Pokemon: ")
+player = character(input("What's your name?: "))
 clear()
-pokemon_owned = [pokemon(first_poke)]
+print("Let's create your first pokemon.")
+input("\nPress enter to continue.")
+clear()
+player.add_pokemon()
+clear()
 
 run = True
 while run:
-    pokemon_owned = main_menu(pokemon_owned)
+    player = main_menu(player)
 #----------------------------------------------
 
 
