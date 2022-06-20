@@ -165,7 +165,7 @@ def battle_fun(pokemon1, pokemon2):
         print("Battle finished.") if pokemon1.alive and pokemon2.alive == True else battle_instance.winner()
 
     else:
-        print("One or both Pokemons are dead.")
+        print("Your Pokemon is dead.")
         input("\nPress enter to continue.")
         clear()
 
@@ -182,10 +182,18 @@ def main_menu(player):
         player.show_pokemons()
 
     elif option == "3": #Fighting
-        name_to_find = input("Which Pokemon do you choose for the fight?: ")
+        print("Which Pokemon do you choose for the fight?\n\n")
+        [print(str(idx + 1) + " - " + str(x.name)) for idx, x in enumerate(player.pokemon_bag)]
+        pokemon_number = input("\n\nEnter number: ")
         clear()
-        user_pokemon = next((pokemon_to_fight for pokemon_to_fight in player.pokemon_bag if pokemon_to_fight.name == name_to_find), None)
-        battle_fun(user_pokemon, pokemon("Random Pokemon"))
+        try:
+            user_pokemon = player.pokemon_bag[int(pokemon_number) - 1]
+            battle_fun(user_pokemon, pokemon("Random Pokemon"))
+        except:
+            print("Try another number.")
+            input("\nPress enter to continue.")
+            clear()
+        
 
     elif option == "4": #Feed Pokemon
         name_to_find = input("Which Pokemon do you want to feed?: ")
