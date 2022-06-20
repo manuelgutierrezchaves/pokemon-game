@@ -29,22 +29,32 @@ class pokemon():
     def feed(self, quantity):
         if self.alive:
             self.hp = self.max_hp if self.hp + quantity > self.max_hp else self.hp + quantity
-            print("{0.name}'s HP is now: {0.hp}/{0.max_hp}".format(self))
+            print("{0.name} heals for {1}\n\n{0.name}'s HP is now: {0.hp}/{0.max_hp}".format(self, quantity))
+            input("\nPress enter to continue.")
+            clear()
         else:
             print("{0.name}'s dead. Try reviving.".format(self))
+            input("\nPress enter to continue.")
+            clear()
 
     def death(self): 
         print("{0.name} has died.".format(self))
         self.alive = False
         self.hp = 0
+        input("\nPress enter to continue.")
+        clear()
 
     def revive(self, quantity):
         if not self.alive:
             self.hp = self.max_hp if quantity > self.max_hp else quantity
             self.alive = True
             print("{0.name}'s HP is now: {0.hp}/{0.max_hp}".format(self))
+            input("\nPress enter to continue.")
+            clear()
         else:
             print("{0.name}'s already alive.".format(self))
+            input("\nPress enter to continue.")
+            clear()
 
 
 
@@ -62,7 +72,11 @@ class battle():
             multiplier = damage_df[(damage_df['Attacker'] == move_type) & (damage_df['Defender'] == self.pokemon2.type)]['Multiplier'].values[0]
             damage = round(self.pokemon1.attack * multiplier * move_dmg / 100)
             self.pokemon2.hp -= damage
+            if multiplier > 1: print("It's super effective.\n")
+            if multiplier < 1: print("It's not very effective.\n")            
             print("{0.name} ({0.type}) hits {1.name} ({1.type}) with {2} ({4}) for {3} points.".format(self.pokemon1, self.pokemon2, move_name, damage, move_type))
+            input("\nPress enter to continue.")
+            clear()
             if self.pokemon2.hp <= 0: self.pokemon2.death()
             
         if attacker == 2:
@@ -72,16 +86,22 @@ class battle():
             multiplier = damage_df[(damage_df['Attacker'] == move_type) & (damage_df['Defender'] == self.pokemon1.type)]['Multiplier'].values[0]
             damage = round(self.pokemon2.attack * multiplier * move_dmg / 100)
             self.pokemon1.hp -= damage
+            if multiplier > 1: print("It's super effective.\n")
+            if multiplier < 1: print("It's not very effective.\n")
             print("{0.name} ({0.type}) hits {1.name} ({1.type}) with {2} ({4}) for {3} points.".format(self.pokemon2, self.pokemon1, move_name, damage, move_type))
+            input("\nPress enter to continue.")
+            clear()
             if self.pokemon1.hp <= 0: self.pokemon1.death()
     
     def __str__(self):
-        string = "Pokemon 1: " + str(self.pokemon1) + "\n Pokemon 2: " + str(self.pokemon2)
         string = "{0}\n{1}".format(self.pokemon1, self.pokemon2)
+
         return string
     
     def winner(self):
         print("The winner is " + self.pokemon1.name) if self.pokemon1.alive == True else print("The winner is " + self.pokemon2.name)
+        input("\nPress enter to continue.")
+        clear()
 
 
 
@@ -91,10 +111,10 @@ def battle_fun(pokemon1, pokemon2):
 
         battle_instance = battle(pokemon1, pokemon2)
 
-        i = 1
+        i = 11
         while pokemon1.alive and pokemon2.alive and run_battle == True:
             if i%2 == 1:
-                option = input("\n\n1 - Attack\n2 - Feed\n3 - Exit battle\n\nEnter number: ")
+                option = input("{0}\n\nBattle Menu\n\n1 - Attack\n2 - Feed\n3 - Exit battle\n\nEnter number: ".format(battle_instance))
                 clear()
                 if option == "1":
                     option_move_name = input("Choose move: (" + pokemon1.moves[0].get("Name") + "/" + pokemon1.moves[1].get("Name") + "): ")
@@ -103,6 +123,8 @@ def battle_fun(pokemon1, pokemon2):
                         battle_instance.attack(1, option_move_name)
                     else:
                         print("Choose a valid move.")
+                        input("\nPress enter to continue.")
+                        clear()
                         i -= 1
                 
                 elif option == "2":
@@ -113,22 +135,27 @@ def battle_fun(pokemon1, pokemon2):
                 
                 else:
                     print("Try again...")
+                    input("\nPress enter to continue.")
+                    clear()
                     i -= 1
             else:
                 battle_instance.attack(2, pokemon2.moves[0].get("Name"))
             
             i += 1
-            print("{0}\n".format(battle_instance))
 
         print("Battle finished.") if pokemon1.alive and pokemon2.alive == True else battle_instance.winner()
+
     else:
         print("One or both Pokemons are dead.")
+        input("\nPress enter to continue.")
+        clear()
 
 
 
 def main_menu(pokemon_owned):
 
-    option = input("1 - New Pokemon\n2 - View Pokemons\n3 - Fight \n4 - Feed\n5 - Revive\n6 - Exit menu\n\nEnter number: ")
+    clear()
+    option = input("Main Menu\n\n1 - New Pokemon\n2 - View Pokemons\n3 - Fight \n4 - Feed\n5 - Revive\n6 - Exit menu\n\nEnter number: ")
     clear()
     if option == "1": #Add new Pokemon
         name = input("Name: ")
@@ -137,17 +164,23 @@ def main_menu(pokemon_owned):
             new_pokemon = pokemon(name)
             pokemon_owned.append(new_pokemon)
             print("Name: {0.name}\nType: {0.type}\nAttack: {0.attack}\nHP: {0.hp}/{0.max_hp}".format(new_pokemon))
+            input("\nPress enter to continue.")
+            clear()
         else:
             print("Name already used.")
+            input("\nPress enter to continue.")
+            clear()
 
     elif option == "2": #Show pokemons
         for poke in pokemon_owned: print("{0.name}\t\tType: {0.type}\tAttack: {0.attack}\tHP: {0.hp}/{0.max_hp}\tMoves: {1} & {2}".format(poke, poke.moves[0].get("Name"), poke.moves[1].get("Name")))
+        input("\nPress enter to continue.")
+        clear()
 
     elif option == "3": #Fighting
         name_to_find = input("Which Pokemon do you choose for the fight?: ")
         clear()
         user_pokemon = next((pokemon_to_fight for pokemon_to_fight in pokemon_owned if pokemon_to_fight.name == name_to_find), None)
-        battle_fun(user_pokemon, pokemon("Random Poke"))
+        battle_fun(user_pokemon, pokemon("Random Pokemon"))
 
     elif option == "4": #Feed Pokemon
         name_to_find = input("Which Pokemon do you want to feed?: ")
@@ -172,7 +205,6 @@ def main_menu(pokemon_owned):
 
 
 #-------------------Main-----------------------
-clear()
 first_poke = input("Choose a name for your first Pokemon: ")
 clear()
 pokemon_owned = [pokemon(first_poke)]
