@@ -131,10 +131,12 @@ def battle_fun(pokemon1, pokemon2):
                 option = input("{0}\n\nBattle Menu\n\n1 - Attack\n2 - Feed\n3 - Exit battle\n\nEnter number: ".format(battle_instance))
                 clear()
                 if option == "1":
-                    option_move_name = input("Choose move: (" + pokemon1.moves[0].get("Name") + "/" + pokemon1.moves[1].get("Name") + "): ")
+                    option_move_name = input("Choose move:\n\n1 - " + pokemon1.moves[0].get("Name") + "\n2 - " + pokemon1.moves[1].get("Name") + "\n\nEnter number: ")
                     clear()
-                    if option_move_name in [pokemon1.moves[0].get("Name"), pokemon1.moves[1].get("Name")]:
-                        battle_instance.attack(1, option_move_name)
+                    if option_move_name == "1":
+                        battle_instance.attack(1, pokemon1.moves[0].get("Name"))  
+                    elif option_move_name == "2":
+                        battle_instance.attack(1, pokemon1.moves[1].get("Name"))
                     else:
                         print("Choose a valid move.")
                         input("\nPress enter to continue.")
