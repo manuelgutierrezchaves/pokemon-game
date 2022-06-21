@@ -1,5 +1,5 @@
 import os
-clear = lambda: os.system('clear')
+clear = lambda: os.system('cls' if os.name=='nt' else 'clear')
 import random
 import pandas as pd
 damage_df = pd.read_csv("damage_multiplier.csv")
@@ -128,7 +128,7 @@ def battle_fun(pokemon1, pokemon2):
         i = 11
         while pokemon1.alive and pokemon2.alive and run_battle == True:
             if i%2 == 1:
-                option = input("{0}\n\nBattle Menu\n\n1 - Attack\n2 - Feed\n3 - Exit battle\n\nEnter number: ".format(battle_instance))
+                option = input("{0}\n\nBattle Menu\n\n1 - Attack\n2 - Feed\n3 - Run away\n\nEnter number: ".format(battle_instance))
                 clear()
                 if option == "1":
                     option_move_name = input("Choose move:\n\n1 - " + pokemon1.moves[0].get("Name") + "\n2 - " + pokemon1.moves[1].get("Name") + "\n\nEnter number: ")
