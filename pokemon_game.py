@@ -6,6 +6,7 @@ import random
 import pandas as pd
 damage_df = pd.read_csv("damage_multiplier.csv")
 moves_df = pd.read_csv("move_sets.csv")
+pokemon_df = pd.read_csv("pokemon_data.csv")
 
 
 class character():
@@ -15,19 +16,13 @@ class character():
         self.pokemon_bag = []
         self.item_bag = []
 
-    def add_pokemon(self):
-        name = input("Name: ")
+    def add_pokemon(self, pokedex_number):
         clear()
-        if next((pokemon_to_add for pokemon_to_add in self.pokemon_bag if pokemon_to_add.name == name), None) == None: #Check if name already in use
-            new_pokemon = pokemon(name)
-            self.pokemon_bag.append(new_pokemon)
-            print("Name: {0.name}\nType: {0.type}\nAttack: {0.attack}\nHP: {0.hp}/{0.max_hp}".format(new_pokemon))
-            input("\nPress enter to continue.")
-            clear()
-        else:
-            print("Name already used.")
-            input("\nPress enter to continue.")
-            clear()
+        new_pokemon = pokemon(pokedex_number)
+        self.pokemon_bag.append(new_pokemon)
+        print("Name: {0.name}\nType: {0.type}\nAttack: {0.attack}\nHP: {0.hp}/{0.max_hp}".format(new_pokemon))
+        input("\nPress enter to continue.")
+        clear()
 
     def show_pokemons(self):
         for poke in self.pokemon_bag: print("{0.name}\t\tType: {0.type}\tAttack: {0.attack}\tHP: {0.hp}/{0.max_hp}\tMoves: {1} & {2}".format(poke, poke.moves[0].get("Name"), poke.moves[1].get("Name")))
@@ -37,12 +32,12 @@ class character():
 
 class pokemon():
 
-    def __init__(self, name):
-        self.name = name
-        self.type = random.choice(["Water", "Fire", "Grass"])
-        self.max_hp = random.randint(300, 400)
+    def __init__(self, pokedex_number):
+        self.name = pokemon_df["Name"].iloc[pokedex_number - 1]
+        self.type = pokemon_df["Type 1"].iloc[pokedex_number - 1]
+        self.max_hp = pokemon_df["HP"].iloc[pokedex_number - 1]
         self.hp = self.max_hp #Health points
-        self.attack = random.randint(90, 110)
+        self.attack = pokemon_df["Attack"].iloc[pokedex_number - 1]
         self.alive = True
         first_moves = moves_df.sample(2) # 2 random moves
         self.moves = [{"Name": first_moves["Name"].values[0], "Type": first_moves["Type"].values[0], "Power": first_moves["Power"].values[0]}, {"Name": first_moves["Name"].values[1], "Type": first_moves["Type"].values[1], "Power": first_moves["Power"].values[1]}]
