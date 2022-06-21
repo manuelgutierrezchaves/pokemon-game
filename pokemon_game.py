@@ -1,4 +1,6 @@
 import os
+
+from numpy import empty
 clear = lambda: os.system('cls' if os.name=='nt' else 'clear')
 import random
 import pandas as pd
@@ -219,13 +221,14 @@ def main_menu(player):
 
 #-------------------Main-----------------------
 clear()
-player = character(input("What's your name?: "))
+# player_name = character(input("What's your name?: "))
+player = character("PlayerOne")
 clear()
-print("Let's create your first pokemon.")
-input("\nPress enter to continue.")
-clear()
-player.add_pokemon()
-clear()
+while  len(player.pokemon_bag) == 0:
+    first_num = input("Choose your first pokemon.\n\n1 - Bulbasaur\n2 - Charmander\n3 - Squirtle\n\nEnter number: ")
+    clear()
+    player.add_pokemon(1) if first_num == "1" else player.add_pokemon(4) if first_num == "2" else player.add_pokemon(7) if first_num == "3" else input("Try another number.\n\nPress enter to continue.")
+    clear()
 
 run = True
 while run:
