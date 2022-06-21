@@ -1,5 +1,4 @@
 import os
-
 from numpy import empty
 clear = lambda: os.system('cls' if os.name=='nt' else 'clear')
 import random
@@ -16,7 +15,7 @@ class character():
         self.pokemon_bag = []
         self.item_bag = []
 
-    def add_pokemon(self, pokedex_number):
+    def add_pokemon(self, pokedex_number): #Need to not allow duplicates
         clear()
         new_pokemon = pokemon(pokedex_number)
         self.pokemon_bag.append(new_pokemon)
@@ -160,6 +159,8 @@ def battle_fun(pokemon1, pokemon2):
             i += 1
 
         print("Battle finished.") if pokemon1.alive and pokemon2.alive == True else battle_instance.winner()
+        input("\nPress enter to continue.")
+        clear()        
 
     else:
         print("Your Pokemon is dead.")
@@ -170,41 +171,52 @@ def battle_fun(pokemon1, pokemon2):
 
 def main_menu(player):
 
-    option = input("Main Menu\n\n1 - New Pokemon\n2 - View Pokemons\n3 - Fight \n4 - Feed\n5 - Revive\n6 - Exit menu\n\nEnter number: ")
+    option = input("Main Menu\n\n1 - View Pokemons\n2 - Fight \n3 - Feed\n4 - Revive\n5 - Exit menu\n\nEnter number: ")
     clear()
-    if option == "1": #Add new Pokemon
-        player.add_pokemon()
-
-    elif option == "2": #Show pokemons
+    if option == "1": #Show pokemons
         player.show_pokemons()
 
-    elif option == "3": #Fighting
+    elif option == "2": #Fighting
         print("Which Pokemon do you choose for the fight?\n\n")
         [print(str(idx + 1) + " - " + str(x.name)) for idx, x in enumerate(player.pokemon_bag)]
         pokemon_number = input("\n\nEnter number: ")
         clear()
-        try:
+        if int(pokemon_number) > 0 and int(pokemon_number) <= len(player.pokemon_bag):
             user_pokemon = player.pokemon_bag[int(pokemon_number) - 1]
-            battle_fun(user_pokemon, pokemon("Random Pokemon"))
-        except:
+            battle_fun(user_pokemon, pokemon(151))
+        else:
+            print("Try another number.")
+            input("\nPress enter to continue.")
+            clear()
+
+    elif option == "3": #Feed Pokemon
+        print("Which Pokemon do you want to feed?: \n\n")
+        [print(str(idx + 1) + " - " + str(x.name)) for idx, x in enumerate(player.pokemon_bag)]
+        pokemon_number = input("\n\nEnter number: ")
+        clear()
+        if int(pokemon_number) > 0 and int(pokemon_number) <= len(player.pokemon_bag):
+            user_pokemon = player.pokemon_bag[int(pokemon_number) - 1]
+            user_pokemon.feed(25)
+        else:
+            print("Try another number.")
+            input("\nPress enter to continue.")
+            clear()
+
+    elif option == "4": #Revive Pokemon
+        print("Which Pokemon do you want to revive?: ")
+        [print(str(idx + 1) + " - " + str(x.name)) for idx, x in enumerate(player.pokemon_bag)]
+        pokemon_number = input("\n\nEnter number: ")        
+        clear()
+        if int(pokemon_number) > 0 and int(pokemon_number) <= len(player.pokemon_bag):
+            user_pokemon = player.pokemon_bag[int(pokemon_number) - 1]
+            user_pokemon.revive(75)
+        else:
             print("Try another number.")
             input("\nPress enter to continue.")
             clear()
         
 
-    elif option == "4": #Feed Pokemon
-        name_to_find = input("Which Pokemon do you want to feed?: ")
-        clear()
-        user_pokemon = next((pokemon_to_feed for pokemon_to_feed in player.pokemon_bag if pokemon_to_feed.name == name_to_find), None)
-        user_pokemon.feed(25)
-
-    elif option == "5": #Revive Pokemon
-        name_to_find = input("Which Pokemon do you want to revive?: ")
-        clear()
-        user_pokemon = next((pokemon_to_revive for pokemon_to_revive in player.pokemon_bag if pokemon_to_revive.name == name_to_find), None)
-        user_pokemon.revive(75)
-
-    elif option == "6": #Exit
+    elif option == "5": #Exit
         global run
         run = False
 
