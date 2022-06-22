@@ -11,11 +11,11 @@ class character():
     def __init__(self, name):
         self.name = name
         self.pokemon_bag = []
-        self.item_bag = [{"Item": "Potion", "Kind": "Heal", "HP" : 10},
-                        {"Item": "Super Potion", "Kind": "Heal", "HP" : 20},
-                        {"Item": "Mega Potion", "Kind": "Heal", "HP" : 30},
-                        {"Item": "Revive", "Kind": "Revive", "% HP" : 50},
-                        {"Item": "Max Revive", "Kind": "Revive", "% HP" : 100}]
+        self.item_bag = [{"Item": "Potion", "Kind": "Heal", "HP": 10, "Quantity": 2},
+                        {"Item": "Super Potion", "Kind": "Heal", "HP": 20, "Quantity": 2},
+                        {"Item": "Mega Potion", "Kind": "Heal", "HP": 30, "Quantity": 2},
+                        {"Item": "Revive", "Kind": "Revive", "% HP": 50, "Quantity": 2},
+                        {"Item": "Max Revive", "Kind": "Revive", "% HP": 100, "Quantity": 2}]
 
     def add_pokemon(self, pokedex_number): #Need to not allow duplicates
         clear()
@@ -64,9 +64,9 @@ class pokemon():
         input("\nPress enter to continue.")
         clear()
 
-    def revive(self, quantity):
+    def revive(self, quantity): #Quantity is a percentage of max HP
         if not self.alive:
-            self.hp = self.max_hp if quantity > self.max_hp else quantity
+            self.hp = round(quantity * self.max_hp / 100)
             self.alive = True
             print("{0.name}'s HP is now: {0.hp}/{0.max_hp}".format(self))
             input("\nPress enter to continue.")
@@ -184,7 +184,7 @@ def main_menu(player):
             input("\nPress enter to continue.")
             clear()
 
-    elif option == "3": #Feed Pokemon -> Items
+    elif option == "3": #Items
 
         print("Inventory.\n\n")
         [print(str(idx) + " - " + i["Item"]) for idx, i in enumerate(player.item_bag, start=1)]
