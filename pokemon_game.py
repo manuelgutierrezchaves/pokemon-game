@@ -13,7 +13,11 @@ class character():
     def __init__(self, name):
         self.name = name
         self.pokemon_bag = []
-        self.item_bag = []
+        self.item_bag = [{"Item": "Potion", "Kind": "Heal", "HP" : 10},
+                        {"Item": "Super Potion", "Kind": "Heal", "HP" : 20},
+                        {"Item": "Mega Potion", "Kind": "Heal", "HP" : 30},
+                        {"Item": "Revive", "Kind": "Revive", "% HP" : 50},
+                        {"Item": "Max Revive", "Kind": "Revive", "% HP" : 100}]
 
     def add_pokemon(self, pokedex_number): #Need to not allow duplicates
         clear()
@@ -98,7 +102,7 @@ class battle():
         self.pokemons[j].hp -= damage
         if multiplier > 1: print("It's super effective.\n")
         if multiplier < 1: print("It's not very effective.\n")            
-        print("{0.name} ({0.type}) hits {1.name} ({1.type}) with {2} ({4}) for {3} points.".format(self.pokemons[i], self.pokemons[j], move_name, damage, move_type))
+        print("{0.name} hits {1.name} with {2} for {3} points.".format(self.pokemons[i], self.pokemons[j], move_name, damage))
         input("\nPress enter to continue.")
         clear()
         if self.pokemons[j].hp <= 0: self.pokemons[j].death()
@@ -169,7 +173,7 @@ def battle_fun(pokemon1, pokemon2):
 
 def main_menu(player):
 
-    option = input("Main Menu\n\n1 - View Pokemons\n2 - Fight \n3 - Feed\n4 - Revive\n5 - Exit menu\n\nEnter number: ")
+    option = input("Main Menu\n\n1 - View Pokemons\n2 - Fight \n3 - Items\n4 - Exit menu\n\nEnter number: ")
     clear()
     if option == "1": #Show pokemons
         player.show_pokemons()
@@ -187,34 +191,31 @@ def main_menu(player):
             input("\nPress enter to continue.")
             clear()
 
-    elif option == "3": #Feed Pokemon
-        print("Which Pokemon do you want to feed?: \n\n")
-        [print(str(idx + 1) + " - " + str(x.name)) for idx, x in enumerate(player.pokemon_bag)]
-        pokemon_number = input("\n\nEnter number: ")
+    elif option == "3": #Feed Pokemon -> Items
+
+        print("Inventory.\n\n")
+        [print(str(idx) + " - " + i["Item"]) for idx, i in enumerate(player.item_bag, start=1)]
+        item_number = input("\n\nEnter number: ")
         clear()
-        if int(pokemon_number) > 0 and int(pokemon_number) <= len(player.pokemon_bag):
-            user_pokemon = player.pokemon_bag[int(pokemon_number) - 1]
-            user_pokemon.feed(25)
+        if int(item_number) > 0 and int(item_number) <= len(player.item_bag):
+            print("Choose Pokemon: \n\n")
+            [print(str(idx) + " - " + str(x.name)) for idx, x in enumerate(player.pokemon_bag, start=1)]
+            pokemon_number = input("\n\nEnter number: ")
+            clear()
+            if int(pokemon_number) > 0 and int(pokemon_number) <= len(player.pokemon_bag):
+                user_pokemon = player.pokemon_bag[int(pokemon_number) - 1]
+                if player.item_bag[int(item_number)-1]["Kind"] == "Heal": user_pokemon.feed(player.item_bag[int(item_number)-1]["HP"])
+                if player.item_bag[int(item_number)-1]["Kind"] == "Revive": user_pokemon.revive(player.item_bag[int(item_number)-1]["% HP"])
+            else:
+                print("Try another number.")
+                input("\nPress enter to continue.")
+                clear()
         else:
             print("Try another number.")
             input("\nPress enter to continue.")
-            clear()
+            clear()        
 
-    elif option == "4": #Revive Pokemon
-        print("Which Pokemon do you want to revive?: \n\n")
-        [print(str(idx + 1) + " - " + str(x.name)) for idx, x in enumerate(player.pokemon_bag)]
-        pokemon_number = input("\n\nEnter number: ")        
-        clear()
-        if int(pokemon_number) > 0 and int(pokemon_number) <= len(player.pokemon_bag):
-            user_pokemon = player.pokemon_bag[int(pokemon_number) - 1]
-            user_pokemon.revive(75)
-        else:
-            print("Try another number.")
-            input("\nPress enter to continue.")
-            clear()
-        
-
-    elif option == "5": #Exit
+    elif option == "4": #Exit
         global run
         run = False
 
@@ -237,7 +238,7 @@ while  len(player.pokemon_bag) == 0:
 
 run = True
 while run:
-    player = main_menu(player)
+    main_menu(player)
 #----------------------------------------------
 
 
