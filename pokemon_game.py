@@ -1,7 +1,5 @@
 import os
-from numpy import empty
 clear = lambda: os.system('cls' if os.name=='nt' else 'clear')
-import random
 import pandas as pd
 damage_df = pd.read_csv("damage_multiplier.csv")
 moves_df = pd.read_csv("move_sets.csv")
@@ -47,11 +45,6 @@ class pokemon():
 
     def __str__(self):
         return "{0.name}, HP: {0.hp}/{0.max_hp}".format(self)
-
-    def evolution(self): #Not in use
-        self.max_hp *= 1.6 #Needs rounding
-        self.hp = self.max_hp
-        self.attack *= 1.6 #Needs rounding
 
     def feed(self, quantity):
         if self.alive:
