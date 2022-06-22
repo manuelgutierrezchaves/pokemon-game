@@ -110,8 +110,6 @@ class battle():
     
     def winner(self):
         print("The winner is " + self.pokemons[0].name) if self.pokemons[0].alive == True else print("The winner is " + self.pokemons[1].name)
-        input("\nPress enter to continue.")
-        clear()
 
 
 
@@ -203,7 +201,7 @@ def main_menu(player):
             clear()
 
     elif option == "4": #Revive Pokemon
-        print("Which Pokemon do you want to revive?: ")
+        print("Which Pokemon do you want to revive?: \n\n")
         [print(str(idx + 1) + " - " + str(x.name)) for idx, x in enumerate(player.pokemon_bag)]
         pokemon_number = input("\n\nEnter number: ")        
         clear()
