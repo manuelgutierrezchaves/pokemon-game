@@ -1,5 +1,5 @@
 import os
-from numpy import number
+import random
 clear = lambda: os.system('cls' if os.name=='nt' else 'clear')
 import pandas as pd
 damage_df = pd.read_csv("damage_multiplier.csv")
@@ -92,7 +92,7 @@ class battle():
         move_dmg = move_dict.get("Power")
         move_type = move_dict.get("Type")
         multiplier = damage_df[(damage_df['Attacker'] == move_type) & (damage_df['Defender'] == self.pokemons[j].type)]['Multiplier'].values[0]
-        damage = round(self.pokemons[i].attack * multiplier * move_dmg / 100)
+        damage = round(self.pokemons[i].attack * multiplier * move_dmg / 100 * random.uniform(0.8, 1.2))
         self.pokemons[j].hp -= damage
         if multiplier > 1: print("It's super effective.\n")
         if multiplier < 1: print("It's not very effective.\n")            
@@ -148,7 +148,7 @@ def battle_fun(pokemon1, pokemon2):
         input("\nPress enter to continue.")
         clear()        
 
-    else:
+    else: # Before starting battle
         print("Your Pokemon is dead.")
         input("\nPress enter to continue.")
         clear()
@@ -169,7 +169,7 @@ def main_menu(player):
         pokemon_number = input_number(len(player.pokemon_bag))
         clear()
         user_pokemon = player.pokemon_bag[int(pokemon_number) - 1]
-        battle_fun(user_pokemon, pokemon(151))
+        battle_fun(user_pokemon, pokemon(10))
 
     elif option == 3: #Items
 
