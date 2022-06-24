@@ -92,10 +92,10 @@ class battle():
         move_type = move_dict.get("Type")
         multiplier = damage_df[(damage_df['Attacker'] == move_type) & (damage_df['Defender'] == self.pokemons[not i].type)]['Multiplier'].values[0]
         damage = round(self.pokemons[i].attack * multiplier * move_dmg / 300 * random.uniform(0.8, 1.2))
-        self.pokemons[not i].hp -= damage
-        if multiplier > 1: print("It's super effective.\n")
-        if multiplier < 1: print("It's not very effective.\n")            
+        self.pokemons[not i].hp -= damage          
         print("{0.name} hits {1.name} with {2} for {3} points.".format(self.pokemons[i], self.pokemons[not i], move_name, damage))
+        if multiplier > 1: print("\nIt's super effective.")
+        if multiplier < 1: print("\nIt's not very effective.")          
         input("\nPress enter to continue.")
         clear()
         if self.pokemons[not i].hp <= 0: self.pokemons[not i].death()
@@ -117,7 +117,7 @@ def battle_fun(pokemon1, pokemon2):
         i = 11
         while pokemon1.alive and pokemon2.alive and run_battle == True:
             if i%2 == 1:
-                print("{0}\n\nBattle Menu\n\n1 - Attack\n2 - Feed\n3 - Run away".format(battle_instance))
+                print("{0}\n\nBattle Menu\n\n1 - Attack\n2 - Items\n3 - Run away".format(battle_instance))
                 option = input_number(3)
                 clear()
                 if option == 1:
@@ -134,7 +134,7 @@ def battle_fun(pokemon1, pokemon2):
 
                 
                 elif option == 2:
-                    pokemon1.feed(25)
+                    item_menu()
                 
                 elif option == 3:
                     print("Running away.")
@@ -158,7 +158,7 @@ def battle_fun(pokemon1, pokemon2):
 
 
 
-def main_menu(player):
+def main_menu():
 
     print("Main Menu\n\n1 - View Pokemons\n2 - Fight \n3 - Items\n4 - Exit menu")
     option = input_number()
@@ -177,27 +177,30 @@ def main_menu(player):
             battle_fun(user_pokemon, pokemon(10))
 
     elif option == 3: #Items
-
-        print("Inventory.\n")
-        [print(str(idx) + " - " + i["Item"]) for idx, i in enumerate(player.item_bag, start=1)]
-        print(str(len(player.item_bag) + 1) + " - Go back")
-        item_number = input_number(len(player.item_bag)+1)
-        clear()
-        if item_number != len(player.item_bag) + 1:
-            print("Choose Pokemon: \n")
-            [print(str(idx) + " - " + str(x.name)) for idx, x in enumerate(player.pokemon_bag, start=1)]
-            print(str(len(player.pokemon_bag) + 1) + " - Cancel")
-            pokemon_number = input_number(len(player.pokemon_bag)+1)
-            clear()
-            if pokemon_number != len(player.pokemon_bag) + 1:
-                user_pokemon = player.pokemon_bag[int(pokemon_number) - 1]
-                if player.item_bag[int(item_number)-1]["Kind"] == "Heal": user_pokemon.feed(player.item_bag[int(item_number)-1]["HP"])
-                if player.item_bag[int(item_number)-1]["Kind"] == "Revive": user_pokemon.revive(player.item_bag[int(item_number)-1]["% HP"])
+        item_menu()
 
     elif option == 4: #Exit
         global run
-        run = False      
+        run = False     
 
+
+def item_menu():
+    print("Inventory.\n")
+    [print(str(idx) + " - " + i["Item"]) for idx, i in enumerate(player.item_bag, start=1)]
+    print(str(len(player.item_bag) + 1) + " - Go back")
+    item_number = input_number(len(player.item_bag)+1)
+    clear()
+    if item_number != len(player.item_bag) + 1:
+        print("Choose Pokemon: \n")
+        [print(str(idx) + " - " + str(x.name)) for idx, x in enumerate(player.pokemon_bag, start=1)]
+        print(str(len(player.pokemon_bag) + 1) + " - Cancel")
+        pokemon_number = input_number(len(player.pokemon_bag)+1)
+        clear()
+        if pokemon_number != len(player.pokemon_bag) + 1:
+            user_pokemon = player.pokemon_bag[int(pokemon_number) - 1]
+            if player.item_bag[int(item_number)-1]["Kind"] == "Heal": user_pokemon.feed(player.item_bag[int(item_number)-1]["HP"])
+            if player.item_bag[int(item_number)-1]["Kind"] == "Revive": user_pokemon.revive(player.item_bag[int(item_number)-1]["% HP"])
+     
 
 def input_number(length=1000):
     number_str = input("\n\nEnter number: ")
@@ -218,13 +221,12 @@ clear()
 # player_name = character(input("What's your name?: "))
 player = character("PlayerOne")
 clear()
-while  len(player.pokemon_bag) == 0:
-    first_num = input("Choose your first pokemon.\n\n1 - Bulbasaur\n2 - Charmander\n3 - Squirtle\n\nEnter number: ")
-    clear()
-    player.add_pokemon(1) if first_num == "1" else player.add_pokemon(4) if first_num == "2" else player.add_pokemon(7) if first_num == "3" else input("Try another number.\n\nPress enter to continue.")
-    clear()
+first_num = input("Choose your first pokemon.\n\n1 - Bulbasaur\n2 - Charmander\n3 - Squirtle\n\nEnter number: ")
+clear()
+player.add_pokemon(1) if first_num == "1" else player.add_pokemon(4) if first_num == "2" else player.add_pokemon(7) if first_num == "3" else input("Try another number.\n\nPress enter to continue.")
+clear()
 
 run = True
 while run:
-    main_menu(player)
+    main_menu()
 #----------------------------------------------
