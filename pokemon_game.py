@@ -28,8 +28,6 @@ class character():
 
     def show_pokemons(self):
         for poke in self.pokemon_bag: print("{0.name}\t\tType: {0.type}\tAttack: {0.attack}\tHP: {0.hp}/{0.max_hp}\tMoves: {1} & {2}".format(poke, poke.moves[0].get("Name"), poke.moves[1].get("Name")))
-        input("\nPress enter to continue.")
-        clear()
 
 
 class pokemon():
@@ -217,6 +215,18 @@ def main_menu():
     clear()
     if option == 1: #Show pokemons
         player.show_pokemons()
+        print("\n1 - Choose order\n2 - Back")
+        if input_number(2) == 1:
+            clear()
+            for idx, poke in enumerate(player.pokemon_bag): print(str(idx+1) + " - {0.name}\t\tType: {0.type}\tAttack: {0.attack}\tHP: {0.hp}/{0.max_hp}\tMoves: {1} & {2}".format(poke, poke.moves[0].get("Name"), poke.moves[1].get("Name")))
+            pokemon_order = input("\nEnter order: ")
+            clear()
+            int_order = [(int(i)-1) for i in pokemon_order]
+            player.pokemon_bag = [player.pokemon_bag[i] for i in int_order]
+            player.show_pokemons()
+            input("\n\nPress enter to continue.")
+            clear()
+
 
     elif option == 2: #Fighting
         enemy = character("Enemy")
