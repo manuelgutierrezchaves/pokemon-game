@@ -113,7 +113,7 @@ def battle_fun(enemy):
         print("All your Pokemons are dead.")
         input("\nPress enter to continue.")
         clear()
-        return None
+        return
 
     if isinstance(enemy, character):
         enemy_pokemon = enemy.pokemon_bag[0]
@@ -144,7 +144,7 @@ def battle_fun(enemy):
                         clear()
                         break
 
-                battle_instance.attack(2, enemy_pokemon.moves[0].get("Name"))
+                battle_instance.attack(2, enemy_pokemon.moves[random.randint(0, 1)].get("Name"))
             
             i += 1
 
@@ -175,7 +175,7 @@ def battle_fun(enemy):
                     clear()
                     break
 
-                battle_instance.attack(2, enemy_pokemon.moves[0].get("Name"))
+                battle_instance.attack(2, enemy_pokemon.moves[random.randint(0, 1)].get("Name"))
             
             i += 1
 
@@ -220,8 +220,8 @@ def main_menu():
 
     elif option == 2: #Fighting
         enemy = character("Enemy")
-        enemy.add_pokemon(19)
-        enemy.add_pokemon(20)
+        enemy.pokemon_bag.append(pokemon(19))
+        enemy.pokemon_bag.append(pokemon(20))
         battle_fun(enemy)
 
     elif option == 3: #Items
@@ -274,8 +274,10 @@ clear()
 # clear()
 
 #TEST-------------
-player.add_pokemon(9)
-player.add_pokemon(151)
+player.pokemon_bag.append(pokemon(3))
+player.pokemon_bag.append(pokemon(6))
+player.pokemon_bag.append(pokemon(9))
+
 
 #-----------------
 
