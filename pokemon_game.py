@@ -75,7 +75,7 @@ class move(): #Map and movements
 
 class character():
 
-    def __init__(self, name):
+    def __init__(self, name, pokemons=[]):
         self.name = name
         self.pokemon_bag = []
         self.item_bag = [{"Item": "Potion", "Kind": "Heal", "HP": 10, "Quantity": 2},
@@ -83,6 +83,8 @@ class character():
                         {"Item": "Mega Potion", "Kind": "Heal", "HP": 30, "Quantity": 2},
                         {"Item": "Revive", "Kind": "Revive", "% HP": 50, "Quantity": 2},
                         {"Item": "Max Revive", "Kind": "Revive", "% HP": 100, "Quantity": 2}]
+        
+        if pokemons: [self.pokemon_bag.append(pokemon(number)) for number in pokemons] #Only for the enemies    
 
     def add_pokemon(self, pokedex_number): #Need to not allow duplicates
         clear()
