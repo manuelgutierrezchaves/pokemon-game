@@ -11,7 +11,7 @@ class move(): #Map and movements
     def __init__(self):
         self.full_map = [{"Name": "Pallet Town", "Activities": [], "Directions": ["Route 1"], "Wilds": []},
                         {"Name": "Route 1", "Activities": ["Fight wild Pokemons"], "Directions": ["Viridian City", "Pallet Town"], "Wilds": [16, 19]},
-                        {"Name": "Viridian City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 1"], "Wilds": []},
+                        {"Name": "Viridian City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 2", "Route 1"], "Wilds": []},
                         {"Name": "Route 2", "Activities": ["Fight wild Pokemons"], "Directions": ["Pewter City", "Viridian City"], "Wilds": [16, 19, 13, 10, 29, 32, 122]},
                         {"Name": "Pewter City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 3", "Route 2"], "Wilds": []}]
 
@@ -23,6 +23,7 @@ class move(): #Map and movements
         self.activities = next(place["Activities"] for place in self.full_map if place["Name"] == self.actual_loc_name)
         self.directions = next(place["Directions"] for place in self.full_map if place["Name"] == self.actual_loc_name)
         self.wilds = next(place["Wilds"] for place in self.full_map if place["Name"] == self.actual_loc_name)
+        self.leader = next((enemy for enemy in self.gym_leaders if enemy["Town"] == self.actual_loc_name), None)
 
     def map_menu(self):
         print("Where do you want to go?\n")
@@ -54,6 +55,7 @@ class move(): #Map and movements
         self.activities = next(place["Activities"] for place in self.full_map if place["Name"] == self.actual_loc_name)
         self.directions = next(place["Directions"] for place in self.full_map if place["Name"] == self.actual_loc_name)
         self.wilds = next(place["Wilds"] for place in self.full_map if place["Name"] == self.actual_loc_name)
+        self.leader = next((enemy for enemy in self.gym_leaders if enemy["Town"] == self.actual_loc_name), None)
 
     def print_loc(self):
         return f"Your are in {self.actual_loc_name}"
@@ -63,7 +65,13 @@ class move(): #Map and movements
         return
 
     def gym(self):
-        input("At the gym, press enter.")
+        if not self.leader: 
+            input("This Gym is closed.\n\nPress enter to continue.")
+            clear()
+            return
+        leader = character(self.leader.get("Name"), self.leader.get("Pokemons"))
+        battle_fun(leader)
+        input(f"Congratulations, you earn the {self.leader.get('Badge')}.\n\nPress enter to continue.")
         return
 
     def center(self):
