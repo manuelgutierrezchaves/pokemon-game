@@ -28,6 +28,7 @@ class character():
 
     def show_pokemons(self):
         for poke in self.pokemon_bag: print("{0.name}\t\tType: {0.type}\tAttack: {0.attack}\tHP: {0.hp}/{0.max_hp}\tMoves: {1} & {2}".format(poke, poke.moves[0].get("Name"), poke.moves[1].get("Name")))
+        for poke in self.pokemon_bag: print(f"{poke.name}\t\tType: {poke.type}\tAttack: {poke.attack}\tHP: {poke.hp}/{poke.max_hp}\tMoves: {poke.moves[0].get('Name')} & {poke.moves[1].get('Name')}")
 
 
 class pokemon():
