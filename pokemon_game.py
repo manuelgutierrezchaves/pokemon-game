@@ -13,7 +13,8 @@ class move(): #Map and movements
                         {"Name": "Route 1", "Activities": ["Fight wild Pokemons"], "Directions": ["Viridian City", "Pallet Town"], "Wilds": [16, 19]},
                         {"Name": "Viridian City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 2", "Route 1"], "Wilds": []},
                         {"Name": "Route 2", "Activities": ["Fight wild Pokemons"], "Directions": ["Pewter City", "Viridian City"], "Wilds": [16, 19, 13, 10, 29, 32, 122]},
-                        {"Name": "Pewter City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 3", "Route 2"], "Wilds": []}]
+                        {"Name": "Pewter City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 3", "Route 2"], "Wilds": []},
+                        {"Name": "Route 3", "Activities": ["Fight wild Pokemons"], "Directions": ["Pewter City"], "Wilds": [16, 19, 13, 10, 29, 32, 122]}]
 
         self.gym_leaders = [{"Name": "Brock", "Town": "Pewter City", "Pokemons": [74, 95], "Badge": "Boulder Badge"},
                             {"Name": "Misty", "Town": "Cerulean City", "Pokemons": [120, 121], "Badge": "Cascade Badge"},
@@ -61,7 +62,7 @@ class move(): #Map and movements
         return f"Your are in {self.actual_loc_name}"
 
     def fight_wild(self):
-        battle_fun(pokemon(self.wilds[random.randint(0,len(self.wilds)-1)]))
+        battle(player, pokemon(self.wilds[random.randint(0,len(self.wilds)-1)]))
         return
 
     def gym(self):
@@ -72,10 +73,9 @@ class move(): #Map and movements
         input(f"You are going to fight against gym leader {self.leader.get('Name')}. Prepare yourself.\n\nPress enter to continue.")
         clear()
         leader = character(self.leader.get("Name"), self.leader.get("Pokemons"))
-        battle_fun(leader)
-        input(f"Congratulations, you earned the {self.leader.get('Badge')}.\n\nPress enter to continue.")
+        battle(player, leader)
+        if self.pokemons[0] != None: input(f"Congratulations, you earned the {self.leader.get('Badge')}.\n\nPress enter to continue.")
         clear()
-        return
 
     def center(self):
         for poke in player.pokemon_bag:
@@ -83,6 +83,7 @@ class move(): #Map and movements
             poke.alive = True
         input("All your Pokemons have been restore to full HP.\n\nPress enter to continue.")
         clear()
+
 
 class character():
 
@@ -117,6 +118,7 @@ class pokemon():
         self.max_hp = pokemon_df["HP"].iloc[pokedex_number - 1]
         self.hp = self.max_hp #Health points
         self.attack = pokemon_df["Attack"].iloc[pokedex_number - 1]
+        self.speed = pokemon_df["Speed"].iloc[pokedex_number - 1]
         self.alive = True
         first_moves = moves_df.sample(2) # 2 random moves
         self.moves = [{"Name": first_moves["Name"].values[0], "Type": first_moves["Type"].values[0], "Power": first_moves["Power"].values[0]}, {"Name": first_moves["Name"].values[1], "Type": first_moves["Type"].values[1], "Power": first_moves["Power"].values[1]}]
@@ -155,11 +157,83 @@ class pokemon():
             clear()
 
 
-
 class battle():
 
-    def __init__(self, pokemon1, pokemon2):
-        self.pokemons = [pokemon1, pokemon2]
+    def __init__(self, player, enemy):
+        self.run_battle = True
+        self.pokemons = [0, 1]
+        self.pokemons[0] = next((poke for poke in player.pokemon_bag if poke.alive == True), None)
+        if self.pokemons[0] == None:
+            print("All your Pokemons are dead.")
+            input("\nPress enter to continue.")
+            clear()
+            return
+
+        if isinstance(enemy, character): self.pokemons[1] = enemy.pokemon_bag[0]
+        if isinstance(enemy, pokemon): self.pokemons[1] = enemy
+
+        self.battle_running(player, enemy)
+
+    def victory(self):
+        self.run_battle = False
+        input("You win\n\nPress enter to continue.")
+        clear()
+
+    def loss(self):
+        self.run_battle = False
+        input("You lose\n\nPress enter to continue.")
+        clear()
+
+    def battle_menu(self, i):
+        print(f"{self}\n\nBattle Menu\n\n1 - Attack\n2 - Items\n3 - Run away")
+        option = input_number(3)
+
+        if option == 1:
+            print(f"Choose move:\n\n1 - {self.pokemons[0].moves[0].get('Name')}\n2 - {self.pokemons[0].moves[1].get('Name')}\n3 - Cancel")
+            option_move_name = input_number(3)
+            if option_move_name == 1:
+                self.attack(1, self.pokemons[0].moves[0].get("Name"))  
+            elif option_move_name == 2:
+                self.attack(1, self.pokemons[0].moves[1].get("Name"))
+            elif option_move_name == 3:
+                i -= 1
+        
+        elif option == 2:
+            item_menu()
+        
+        elif option == 3:
+            print("Running away.")
+            input("\nPress enter to continue.")
+            clear()
+            return False, i
+        
+        return True, i
+
+    def battle_running(self, player, enemy):
+        i = 11
+        while self.run_battle == True:
+            if i%2 == 1:
+                if not self.pokemons[0].alive:
+                    self.pokemons[0] = next((poke for poke in player.pokemon_bag if poke.alive == True), None)
+                    if self.pokemons[0] == None:
+                        self.loss()
+                        return
+                self.run_battle, i = self.battle_menu(i)
+            else:
+                if isinstance(enemy, pokemon) and not self.pokemons[1].alive:
+                    self.victory()
+                    return
+                if not self.pokemons[1].alive:
+                    self.pokemons[1] = next((poke for poke in enemy.pokemon_bag if poke.alive == True), None)
+                    if self.pokemons[1] == None:
+                        self.victory()
+                        return
+
+                self.attack(2, self.pokemons[1].moves[random.randint(0, 1)].get("Name"))
+            
+            i += 1
+
+
 
     def attack(self, attacker, move_name):
         i = 0 if attacker == 1 else 1
@@ -181,108 +255,6 @@ class battle():
         string = "{0}\n{1}".format(self.pokemons[0], self.pokemons[1])
         return string
 
-
-
-def battle_fun(enemy):
-    run_battle = True
-    user_pokemon = next((poke for poke in player.pokemon_bag if poke.alive == True), None)
-    if user_pokemon == None:
-        print("All your Pokemons are dead.")
-        input("\nPress enter to continue.")
-        clear()
-        return
-
-    if isinstance(enemy, character):
-        enemy_pokemon = enemy.pokemon_bag[0]
-        battle_instance = battle(user_pokemon, enemy_pokemon)
-        i = 11
-        while run_battle == True:
-            if i%2 == 1:
-                if not user_pokemon.alive:
-                    user_pokemon = next((poke for poke in player.pokemon_bag if poke.alive == True), None)
-                    battle_instance = battle(user_pokemon, enemy_pokemon)
-                    if user_pokemon == None:
-                        run_battle = False
-                        print("You lost")
-                        input("\nPress enter to continue.")
-                        clear()
-                        break
-                        
-                run_battle, i = battle_menu(battle_instance, user_pokemon, i)
-                
-            else:
-                if not enemy_pokemon.alive:
-                    enemy_pokemon = next((poke for poke in enemy.pokemon_bag if poke.alive == True), None)
-                    battle_instance = battle(user_pokemon, enemy_pokemon)
-                    if enemy_pokemon == None:
-                        run_battle = False
-                        print("You win")
-                        input("\nPress enter to continue.")
-                        clear()
-                        break
-
-                battle_instance.attack(2, enemy_pokemon.moves[random.randint(0, 1)].get("Name"))
-            
-            i += 1
-
-
-    if isinstance(enemy, pokemon):
-        enemy_pokemon = enemy
-        battle_instance = battle(user_pokemon, enemy_pokemon)
-        i = 11
-        while run_battle == True:
-            if i%2 == 1:
-                if not user_pokemon.alive:
-                    user_pokemon = next((poke for poke in player.pokemon_bag if poke.alive == True), None)
-                    battle_instance = battle(user_pokemon, enemy_pokemon)
-                    if user_pokemon == None:
-                        run_battle = False
-                        print("You lost")
-                        input("\nPress enter to continue.")
-                        clear()
-                        break
-                        
-                run_battle, i = battle_menu(battle_instance, user_pokemon, i)
-                
-            else:
-                if not enemy_pokemon.alive:
-                    run_battle = False
-                    print("You win")
-                    input("\nPress enter to continue.")
-                    clear()
-                    break
-
-                battle_instance.attack(2, enemy_pokemon.moves[random.randint(0, 1)].get("Name"))
-            
-            i += 1
-
-
-
-def battle_menu(battle_instance, user_pokemon, i):
-    print("{0}\n\nBattle Menu\n\n1 - Attack\n2 - Items\n3 - Run away".format(battle_instance))
-    option = input_number(3)
-
-    if option == 1:
-        print("Choose move:\n\n1 - " + user_pokemon.moves[0].get("Name") + "\n2 - " + user_pokemon.moves[1].get("Name"))
-        print("3 - Cancel")
-        option_move_name = input_number(3)
-        if option_move_name == 1:
-            battle_instance.attack(1, user_pokemon.moves[0].get("Name"))  
-        elif option_move_name == 2:
-            battle_instance.attack(1, user_pokemon.moves[1].get("Name"))
-        elif option_move_name == 3:
-            i -= 1
-    
-    elif option == 2:
-        item_menu()
-    
-    elif option == 3:
-        print("Running away.")
-        input("\nPress enter to continue.")
-        clear()
-        return False, i
-    
-    return True, i
 
 
 def main_menu():
