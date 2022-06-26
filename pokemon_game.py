@@ -69,9 +69,12 @@ class move(): #Map and movements
             input("This Gym is closed.\n\nPress enter to continue.")
             clear()
             return
+        input(f"You are going to fight against gym leader {self.leader.get('Name')}. Prepare yourself.\n\nPress enter to continue.")
+        clear()
         leader = character(self.leader.get("Name"), self.leader.get("Pokemons"))
         battle_fun(leader)
-        input(f"Congratulations, you earn the {self.leader.get('Badge')}.\n\nPress enter to continue.")
+        input(f"Congratulations, you earned the {self.leader.get('Badge')}.\n\nPress enter to continue.")
+        clear()
         return
 
     def center(self):
