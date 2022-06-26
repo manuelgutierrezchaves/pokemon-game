@@ -129,7 +129,7 @@ def battle_fun(enemy):
                         clear()
                         break
                         
-                run_battle = battle_menu(battle_instance, user_pokemon)
+                run_battle, i = battle_menu(battle_instance, user_pokemon, i)
                 
             else:
                 if not enemy_pokemon.alive:
@@ -163,7 +163,7 @@ def battle_fun(enemy):
                         clear()
                         break
                         
-                run_battle = battle_menu(battle_instance, user_pokemon)
+                run_battle, i = battle_menu(battle_instance, user_pokemon, i)
                 
             else:
                 if not enemy_pokemon.alive:
@@ -179,7 +179,7 @@ def battle_fun(enemy):
 
 
 
-def battle_menu(battle_instance, user_pokemon):
+def battle_menu(battle_instance, user_pokemon, i):
     print("{0}\n\nBattle Menu\n\n1 - Attack\n2 - Items\n3 - Run away".format(battle_instance))
     option = input_number(3)
     clear()
@@ -203,9 +203,9 @@ def battle_menu(battle_instance, user_pokemon):
         print("Running away.")
         input("\nPress enter to continue.")
         clear()
-        return False
+        return False, i
     
-    return True
+    return True, i
 
 
 def main_menu():
@@ -219,13 +219,14 @@ def main_menu():
         if input_number(2) == 1:
             clear()
             for idx, poke in enumerate(player.pokemon_bag): print(str(idx+1) + " - {0.name}\t\tType: {0.type}\tAttack: {0.attack}\tHP: {0.hp}/{0.max_hp}\tMoves: {1} & {2}".format(poke, poke.moves[0].get("Name"), poke.moves[1].get("Name")))
-            pokemon_order = input("\nEnter order: ")
+            pokemon_order = input("\nEnter order: ") #Breaks if wrong input
             clear()
             int_order = [(int(i)-1) for i in pokemon_order]
             player.pokemon_bag = [player.pokemon_bag[i] for i in int_order]
             player.show_pokemons()
             input("\n\nPress enter to continue.")
             clear()
+        else: clear()
 
 
     elif option == 2: #Fighting
@@ -244,11 +245,17 @@ def main_menu():
 
 def item_menu():
     print("Inventory.\n")
-    [print(str(idx) + " - " + i["Item"]) for idx, i in enumerate(player.item_bag, start=1)]
+    [print(str(idx) + " - " + i["Item"] + " x" + str(i["Quantity"])) for idx, i in enumerate(player.item_bag, start=1)]
     print(str(len(player.item_bag) + 1) + " - Go back")
     item_number = input_number(len(player.item_bag)+1)
     clear()
     if item_number != len(player.item_bag) + 1:
+        if player.item_bag[item_number-1]["Quantity"] == 0: 
+            print("You don't have any more.")
+            input("\n\nPress enter to continue.")
+            clear()
+            return
+        player.item_bag[item_number-1]["Quantity"] -= 1
         print("Choose Pokemon: \n")
         [print(str(idx) + " - " + str(x.name)) for idx, x in enumerate(player.pokemon_bag, start=1)]
         print(str(len(player.pokemon_bag) + 1) + " - Cancel")
@@ -258,6 +265,7 @@ def item_menu():
             user_pokemon = player.pokemon_bag[int(pokemon_number) - 1]
             if player.item_bag[int(item_number)-1]["Kind"] == "Heal": user_pokemon.feed(player.item_bag[int(item_number)-1]["HP"])
             if player.item_bag[int(item_number)-1]["Kind"] == "Revive": user_pokemon.revive(player.item_bag[int(item_number)-1]["% HP"])
+            
      
 
 def input_number(length=1000):
