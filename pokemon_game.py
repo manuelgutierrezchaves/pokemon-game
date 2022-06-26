@@ -15,13 +15,17 @@ class move(): #Map and movements
                         {"Name": "Route 2", "Activities": ["Fight wild Pokemons"], "Directions": ["Pewter City", "Viridian City"], "Wilds": [16, 19, 13, 10, 29, 32, 122]},
                         {"Name": "Pewter City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 3", "Route 2"], "Wilds": []}]
 
+        self.gym_leaders = [{"Name": "Brock", "Town": "Pewter City", "Pokemons": [74, 95], "Badge": "Boulder Badge"},
+                            {"Name": "Misty", "Town": "Cerulean City", "Pokemons": [120, 121], "Badge": "Cascade Badge"},
+                            {"Name": "Lt. Surge", "Town": "Vermillion City", "Pokemons": [100, 25, 26], "Badge": "Thunder Badge"}]
+
         self.actual_loc_name = "Pallet Town"
         self.activities = next(place["Activities"] for place in self.full_map if place["Name"] == self.actual_loc_name)
         self.directions = next(place["Directions"] for place in self.full_map if place["Name"] == self.actual_loc_name)
         self.wilds = next(place["Wilds"] for place in self.full_map if place["Name"] == self.actual_loc_name)
 
     def map_menu(self):
-        print("Where do you want to go?")
+        print("Where do you want to go?\n")
         for idx, i in enumerate(self.directions, start=1): print(f"{idx} - {i}")
         print(f"{len(self.directions)+1} - Go back")
         place_number = input_number(len(self.directions)+1)
@@ -32,7 +36,7 @@ class move(): #Map and movements
         if not self.activities:
             input("There's nothing to do here.\n\n\nPress enter to continue.")
             return
-        print("What do you want to do?")
+        print("What do you want to do?\n")
         for idx, i in enumerate(self.activities, start=1): print(f"{idx} - {i}")
         print(f"{len(self.activities)+1} - Go back")
         activity_number = input_number(len(self.activities)+1)
@@ -55,7 +59,7 @@ class move(): #Map and movements
         return f"Your are in {self.actual_loc_name}"
 
     def fight_wild(self):
-        input("Start fight with wild pokemon, press enter.")
+        battle_fun(pokemon(self.wilds[random.randint(0,len(self.wilds)-1)]))
         return
 
     def gym(self):
@@ -63,8 +67,11 @@ class move(): #Map and movements
         return
 
     def center(self):
-        input("At the center, press enter.")
-        return
+        for poke in player.pokemon_bag:
+            poke.hp = poke.max_hp
+            poke.alive = True
+        input("All your Pokemons have been restore to full HP.\n\nPress enter to continue.")
+        clear()
 
 class character():
 
@@ -321,10 +328,10 @@ def item_menu():
 
 def input_number(length=1000):
     number_str = input("\n\nEnter number: ")
-    clear()
     try:
         number_int = int(number_str)
         if 0 < number_int <= length:
+            clear()
             return number_int
         else:
             print (2 * "\033[A                             \033[A") #Delete previous line x2
