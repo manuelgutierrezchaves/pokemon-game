@@ -6,6 +6,65 @@ damage_df = pd.read_csv("damage_multiplier.csv")
 moves_df = pd.read_csv("move_sets.csv")
 pokemon_df = pd.read_csv("pokemon_data.csv")
 
+class move(): #Map and movements
+    
+    def __init__(self):
+        self.full_map = [{"Name": "Pallet Town", "Activities": [], "Directions": ["Route 1"], "Wilds": []},
+                        {"Name": "Route 1", "Activities": ["Fight wild Pokemons"], "Directions": ["Viridian City", "Pallet Town"], "Wilds": [16, 19]},
+                        {"Name": "Viridian City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 1"], "Wilds": []},
+                        {"Name": "Route 2", "Activities": ["Fight wild Pokemons"], "Directions": ["Pewter City", "Viridian City"], "Wilds": [16, 19, 13, 10, 29, 32, 122]},
+                        {"Name": "Pewter City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 3", "Route 2"], "Wilds": []}]
+
+        self.actual_loc_name = "Pallet Town"
+        self.activities = next(place["Activities"] for place in self.full_map if place["Name"] == self.actual_loc_name)
+        self.directions = next(place["Directions"] for place in self.full_map if place["Name"] == self.actual_loc_name)
+        self.wilds = next(place["Wilds"] for place in self.full_map if place["Name"] == self.actual_loc_name)
+
+    def map_menu(self):
+        print("Where do you want to go?")
+        for idx, i in enumerate(self.directions, start=1): print(f"{idx} - {i}")
+        print(f"{len(self.directions)+1} - Go back")
+        place_number = input_number(len(self.directions)+1)
+        if place_number == len(self.directions) + 1: return
+        map.update(self.directions[place_number-1])
+
+    def activities_menu(self):
+        if not self.activities:
+            input("There's nothing to do here.\n\n\nPress enter to continue.")
+            return
+        print("What do you want to do?")
+        for idx, i in enumerate(self.activities, start=1): print(f"{idx} - {i}")
+        print(f"{len(self.activities)+1} - Go back")
+        activity_number = input_number(len(self.activities)+1)
+        if activity_number == len(self.activities) + 1: return
+        activity_name = self.activities[activity_number-1]
+        if activity_name == "Gym":
+            self.gym()
+        elif activity_name == "Pokemon Center":
+            self.center()
+        elif activity_name == "Fight wild Pokemons":
+            self.fight_wild()
+
+    def update(self, new_loc):
+        self.actual_loc_name = new_loc
+        self.activities = next(place["Activities"] for place in self.full_map if place["Name"] == self.actual_loc_name)
+        self.directions = next(place["Directions"] for place in self.full_map if place["Name"] == self.actual_loc_name)
+        self.wilds = next(place["Wilds"] for place in self.full_map if place["Name"] == self.actual_loc_name)
+
+    def print_loc(self):
+        return f"Your are in {self.actual_loc_name}"
+
+    def fight_wild(self):
+        input("Start fight with wild pokemon, press enter.")
+        return
+
+    def gym(self):
+        input("At the gym, press enter.")
+        return
+
+    def center(self):
+        input("At the center, press enter.")
+        return
 
 class character():
 
@@ -27,7 +86,6 @@ class character():
         clear()
 
     def show_pokemons(self):
-        for poke in self.pokemon_bag: print("{0.name}\t\tType: {0.type}\tAttack: {0.attack}\tHP: {0.hp}/{0.max_hp}\tMoves: {1} & {2}".format(poke, poke.moves[0].get("Name"), poke.moves[1].get("Name")))
         for poke in self.pokemon_bag: print(f"{poke.name}\t\tType: {poke.type}\tAttack: {poke.attack}\tHP: {poke.hp}/{poke.max_hp}\tMoves: {poke.moves[0].get('Name')} & {poke.moves[1].get('Name')}")
 
 
@@ -183,13 +241,11 @@ def battle_fun(enemy):
 def battle_menu(battle_instance, user_pokemon, i):
     print("{0}\n\nBattle Menu\n\n1 - Attack\n2 - Items\n3 - Run away".format(battle_instance))
     option = input_number(3)
-    clear()
 
     if option == 1:
         print("Choose move:\n\n1 - " + user_pokemon.moves[0].get("Name") + "\n2 - " + user_pokemon.moves[1].get("Name"))
         print("3 - Cancel")
         option_move_name = input_number(3)
-        clear()
         if option_move_name == 1:
             battle_instance.attack(1, user_pokemon.moves[0].get("Name"))  
         elif option_move_name == 2:
@@ -210,15 +266,13 @@ def battle_menu(battle_instance, user_pokemon, i):
 
 
 def main_menu():
-
-    print("Main Menu\n\n1 - Pokemons\n2 - Fight \n3 - Items\n4 - Exit menu")
+    
+    print(f"{map.print_loc()}\n\n1 - Pokemons\n2 - Move\n3 - Activities\n4 - Items\n5 - Exit menu")
     option = input_number()
-    clear()
     if option == 1: #Show pokemons
         player.show_pokemons()
         print("\n1 - Choose order\n2 - Back")
         if input_number(2) == 1:
-            clear()
             for idx, poke in enumerate(player.pokemon_bag): print(str(idx+1) + " - {0.name}\t\tType: {0.type}\tAttack: {0.attack}\tHP: {0.hp}/{0.max_hp}\tMoves: {1} & {2}".format(poke, poke.moves[0].get("Name"), poke.moves[1].get("Name")))
             pokemon_order = input("\nEnter order: ") #Breaks if wrong input
             clear()
@@ -227,19 +281,17 @@ def main_menu():
             player.show_pokemons()
             input("\n\nPress enter to continue.")
             clear()
-        else: clear()
 
+    elif option == 2: #Move
+        map.map_menu()
 
-    elif option == 2: #Fighting
-        enemy = character("Enemy")
-        enemy.pokemon_bag.append(pokemon(19))
-        enemy.pokemon_bag.append(pokemon(20))
-        battle_fun(enemy)
+    elif option == 3: #Activities
+        map.activities_menu()
 
-    elif option == 3: #Items
+    elif option == 4: #Items
         item_menu()
 
-    elif option == 4: #Exit
+    elif option == 5: #Exit
         global run
         run = False     
 
@@ -249,7 +301,6 @@ def item_menu():
     [print(str(idx) + " - " + i["Item"] + " x" + str(i["Quantity"])) for idx, i in enumerate(player.item_bag, start=1)]
     print(str(len(player.item_bag) + 1) + " - Go back")
     item_number = input_number(len(player.item_bag)+1)
-    clear()
     if item_number != len(player.item_bag) + 1:
         if player.item_bag[item_number-1]["Quantity"] == 0: 
             print("You don't have any more.")
@@ -261,7 +312,6 @@ def item_menu():
         [print(str(idx) + " - " + str(x.name)) for idx, x in enumerate(player.pokemon_bag, start=1)]
         print(str(len(player.pokemon_bag) + 1) + " - Cancel")
         pokemon_number = input_number(len(player.pokemon_bag)+1)
-        clear()
         if pokemon_number != len(player.pokemon_bag) + 1:
             user_pokemon = player.pokemon_bag[int(pokemon_number) - 1]
             if player.item_bag[int(item_number)-1]["Kind"] == "Heal": user_pokemon.feed(player.item_bag[int(item_number)-1]["HP"])
@@ -271,6 +321,7 @@ def item_menu():
 
 def input_number(length=1000):
     number_str = input("\n\nEnter number: ")
+    clear()
     try:
         number_int = int(number_str)
         if 0 < number_int <= length:
@@ -286,6 +337,7 @@ def input_number(length=1000):
 #-------------------Main-----------------------
 clear()
 player = character("PlayerOne")
+map = move()
 clear()
 # first_num = input("Choose your first pokemon.\n\n1 - Bulbasaur\n2 - Charmander\n3 - Squirtle\n\nEnter number: ")
 # clear()
@@ -296,8 +348,6 @@ clear()
 player.pokemon_bag.append(pokemon(3))
 player.pokemon_bag.append(pokemon(6))
 player.pokemon_bag.append(pokemon(9))
-
-
 #-----------------
 
 run = True
