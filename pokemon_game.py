@@ -9,12 +9,12 @@ pokemon_df = pd.read_csv("pokemon_data.csv")
 class move(): #Map and movements
     
     def __init__(self):
-        self.full_map = [{"Name": "Pallet Town", "Activities": [], "Directions": ["Route 1"], "Wilds": []},
-                        {"Name": "Route 1", "Activities": ["Fight wild Pokemons"], "Directions": ["Viridian City", "Pallet Town"], "Wilds": [16, 19]},
-                        {"Name": "Viridian City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 2", "Route 1"], "Wilds": []},
-                        {"Name": "Route 2", "Activities": ["Fight wild Pokemons"], "Directions": ["Pewter City", "Viridian City"], "Wilds": [16, 19, 13, 10, 29, 32, 122]},
-                        {"Name": "Pewter City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 3", "Route 2"], "Wilds": []},
-                        {"Name": "Route 3", "Activities": ["Fight wild Pokemons"], "Directions": ["Pewter City"], "Wilds": [16, 19, 13, 10, 29, 32, 122]}]
+        self.full_map = [{"Name": "Pallet Town", "Activities": [], "Directions": ["Route 1"], "Wilds": [], "Shop": []},
+                        {"Name": "Route 1", "Activities": ["Fight wild Pokemons"], "Directions": ["Viridian City", "Pallet Town"], "Wilds": [16, 19], "Shop": []},
+                        {"Name": "Viridian City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 2", "Route 1"], "Wilds": [], "Shop": ["Potion", "Revive"]},
+                        {"Name": "Route 2", "Activities": ["Fight wild Pokemons"], "Directions": ["Pewter City", "Viridian City"], "Wilds": [16, 19, 13, 10, 29, 32, 122], "Shop": []},
+                        {"Name": "Pewter City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 3", "Route 2"], "Wilds": [], "Shop": ["Potion", "Super Potion", "Revive"]},
+                        {"Name": "Route 3", "Activities": ["Fight wild Pokemons"], "Directions": ["Pewter City"], "Wilds": [16, 19, 13, 10, 29, 32, 122], "Shop": []}]
 
         self.gym_leaders = [{"Name": "Brock", "Town": "Pewter City", "Pokemons": [74, 95], "Badge": "Boulder Badge"},
                             {"Name": "Misty", "Town": "Cerulean City", "Pokemons": [120, 121], "Badge": "Cascade Badge"},
@@ -24,6 +24,7 @@ class move(): #Map and movements
         self.activities = next(place["Activities"] for place in self.full_map if place["Name"] == self.actual_loc_name)
         self.directions = next(place["Directions"] for place in self.full_map if place["Name"] == self.actual_loc_name)
         self.wilds = next(place["Wilds"] for place in self.full_map if place["Name"] == self.actual_loc_name)
+        self.items_sold = next((place["Shop"] for place in self.full_map if place["Name"] == self.actual_loc_name), None)
         self.leader = next((enemy for enemy in self.gym_leaders if enemy["Town"] == self.actual_loc_name), None)
 
     def map_menu(self):
@@ -57,6 +58,7 @@ class move(): #Map and movements
         self.directions = next(place["Directions"] for place in self.full_map if place["Name"] == self.actual_loc_name)
         self.wilds = next(place["Wilds"] for place in self.full_map if place["Name"] == self.actual_loc_name)
         self.leader = next((enemy for enemy in self.gym_leaders if enemy["Town"] == self.actual_loc_name), None)
+        self.items_sold = next((place["Shop"] for place in self.full_map if place["Name"] == self.actual_loc_name), None)
 
     def print_loc(self):
         return f"Your are in {self.actual_loc_name}"
@@ -74,15 +76,24 @@ class move(): #Map and movements
         clear()
         leader = character(self.leader.get("Name"), self.leader.get("Pokemons"))
         battle(player, leader)
-        if self.pokemons[0] != None: input(f"Congratulations, you earned the {self.leader.get('Badge')}.\n\nPress enter to continue.")
-        clear()
 
     def center(self):
-        for poke in player.pokemon_bag:
-            poke.hp = poke.max_hp
-            poke.alive = True
-        input("All your Pokemons have been restore to full HP.\n\nPress enter to continue.")
-        clear()
+        print("Pokemon Center:\n\n1 - Heal\n2 - Shop")
+        if input_number(2) == 1:
+            for poke in player.pokemon_bag:
+                poke.hp = poke.max_hp
+                poke.alive = True
+            input("All your Pokemons have been restore to full HP.\n\nPress enter to continue.")
+            clear()
+        else:
+            self.item_shop()
+
+    def item_shop(self):
+        print("Item shop\n")
+        for idx, item in enumerate(self.items_sold, start=1): print(f"{idx} - {item}")
+        item_number = input_number(len(self.items_sold))
+        item = self.items_sold[item_number-1]
+        player.add_item(item)
 
 
 class character():
@@ -106,8 +117,14 @@ class character():
         input("\nPress enter to continue.")
         clear()
 
+    def add_item(self, item_name):
+        idx = next((idx for (idx, dict) in enumerate(self.item_bag) if dict["Item"] == item_name), None)
+        self.item_bag[idx]["Quantity"] = self.item_bag[idx].get("Quantity") + 1
+
     def show_pokemons(self):
         for poke in self.pokemon_bag: print(f"{poke.name}\t\tType: {poke.type}\tAttack: {poke.attack}\tHP: {poke.hp}/{poke.max_hp}\tMoves: {poke.moves[0].get('Name')} & {poke.moves[1].get('Name')}")
+        print("")
+        for item in self.item_bag: print(f"{item.get('Item')}\t\tKind: {item.get('Kind')}\t\Quantity: {item.get('Quantity')}")
 
 
 class pokemon():
@@ -188,7 +205,7 @@ class battle():
         print(f"{self}\n\nBattle Menu\n\n1 - Attack\n2 - Items\n3 - Run away")
         option = input_number(3)
 
-        if option == 1:
+        if option == 1: #Attack
             print(f"Choose move:\n\n1 - {self.pokemons[0].moves[0].get('Name')}\n2 - {self.pokemons[0].moves[1].get('Name')}\n3 - Cancel")
             option_move_name = input_number(3)
             if option_move_name == 1:
@@ -198,10 +215,10 @@ class battle():
             elif option_move_name == 3:
                 i -= 1
         
-        elif option == 2:
+        elif option == 2: #Items
             item_menu()
         
-        elif option == 3:
+        elif option == 3: #Run away
             print("Running away.")
             input("\nPress enter to continue.")
             clear()
