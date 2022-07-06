@@ -1,17 +1,19 @@
 import os
 import random
+from turtle import speed
 clear = lambda: os.system('cls' if os.name=='nt' else 'clear')
 import pandas as pd
 damage_df = pd.read_csv("damage_multiplier.csv")
 moves_df = pd.read_csv("move_sets.csv")
 pokemon_df = pd.read_csv("pokemon_data.csv")
+_DEBUG = True
 
 class move(): #Map and movements
     
     def __init__(self):
         self.full_map = [{"Name": "Pallet Town", "Activities": [], "Directions": ["Route 1"], "Wilds": [], "Shop": []},
                         {"Name": "Route 1", "Activities": ["Fight wild Pokemons"], "Directions": ["Viridian City", "Pallet Town"], "Wilds": [16, 19], "Shop": []},
-                        {"Name": "Viridian City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 2", "Route 1"], "Wilds": [], "Shop": ["Potion", "Revive"]},
+                        {"Name": "Viridian City", "Activities": ["Pokemon Center"], "Directions": ["Route 2", "Route 1"], "Wilds": [], "Shop": ["Potion", "Revive"]},
                         {"Name": "Route 2", "Activities": ["Fight wild Pokemons"], "Directions": ["Pewter City", "Viridian City"], "Wilds": [16, 19, 13, 10, 29, 32, 122], "Shop": []},
                         {"Name": "Pewter City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 3", "Route 2"], "Wilds": [], "Shop": ["Potion", "Super Potion", "Revive"]},
                         {"Name": "Route 3", "Activities": ["Fight wild Pokemons"], "Directions": ["Pewter City"], "Wilds": [16, 19, 13, 10, 29, 32, 122], "Shop": []}]
@@ -61,7 +63,7 @@ class move(): #Map and movements
         self.items_sold = next((place["Shop"] for place in self.full_map if place["Name"] == self.actual_loc_name), None)
 
     def print_loc(self):
-        return f"Your are in {self.actual_loc_name}"
+        return f"You are in {self.actual_loc_name}"
 
     def fight_wild(self):
         battle(player, pokemon(self.wilds[random.randint(0,len(self.wilds)-1)]))
@@ -201,56 +203,57 @@ class battle():
         input("You lose\n\nPress enter to continue.")
         clear()
 
-    def battle_menu(self, i):
-        print(f"{self}\n\nBattle Menu\n\n1 - Attack\n2 - Items\n3 - Run away")
-        option = input_number(3)
+    def battle_menu(self):
+        while(True):
+            print(f"{self}\n\nBattle Menu\n\n1 - Attack\n2 - Items\n3 - Run away")
+            option = input_number(3)
 
-        if option == 1: #Attack
-            print(f"Choose move:\n\n1 - {self.pokemons[0].moves[0].get('Name')}\n2 - {self.pokemons[0].moves[1].get('Name')}\n3 - Cancel")
-            option_move_name = input_number(3)
-            if option_move_name == 1:
-                self.attack(1, self.pokemons[0].moves[0].get("Name"))  
-            elif option_move_name == 2:
-                self.attack(1, self.pokemons[0].moves[1].get("Name"))
-            elif option_move_name == 3:
-                i -= 1
-        
-        elif option == 2: #Items
-            item_menu()
-        
-        elif option == 3: #Run away
-            print("Running away.")
-            input("\nPress enter to continue.")
-            clear()
-            return False, i
-        
-        return True, i
-
-    def battle_running(self, player, enemy):
-        i = 11
-        while self.run_battle == True:
-            if i%2 == 1:
-                if not self.pokemons[0].alive:
-                    self.pokemons[0] = next((poke for poke in player.pokemon_bag if poke.alive == True), None)
-                    if self.pokemons[0] == None:
-                        self.loss()
-                        return
-                self.run_battle, i = self.battle_menu(i)
-            else:
-                if isinstance(enemy, pokemon) and not self.pokemons[1].alive:
-                    self.victory()
-                    return
-                if not self.pokemons[1].alive:
-                    self.pokemons[1] = next((poke for poke in enemy.pokemon_bag if poke.alive == True), None)
-                    if self.pokemons[1] == None:
-                        self.victory()
-                        return
-
+            if option == 1: #Attack
+                print(f"Choose move:\n\n1 - {self.pokemons[0].moves[0].get('Name')}\n2 - {self.pokemons[0].moves[1].get('Name')}\n3 - Cancel")
+                option_move_name = input_number(3)
+                if (option_move_name == 1) or (option_move_name == 2):
+                    if (self.pokemons[0].speed > self.pokemons[1].speed): # Check who is faster
+                        lethal = self.attack(1, self.pokemons[0].moves[option_move_name - 1].get("Name"))
+                        if not lethal: self.attack(2, self.pokemons[1].moves[random.randint(0, 1)].get("Name"))
+                    elif (self.pokemons[0].speed < self.pokemons[1].speed):
+                        lethal: self.attack(2, self.pokemons[1].moves[random.randint(0, 1)].get("Name"))
+                        if not lethal: self.attack(1, self.pokemons[0].moves[option_move_name - 1].get("Name"))
+                    else: # Speed tie
+                        if (random.randint(0, 1)) == 1:
+                            lethal: self.attack(1, self.pokemons[0].moves[option_move_name - 1].get("Name"))
+                            if not lethal: self.attack(2, self.pokemons[1].moves[random.randint(0, 1)].get("Name"))
+                        else: 
+                            lethal: self.attack(2, self.pokemons[1].moves[random.randint(0, 1)].get("Name"))
+                            if not lethal: self.attack(1, self.pokemons[0].moves[option_move_name - 1].get("Name"))
+            
+            elif option == 2: #Items
+                item_menu()
                 self.attack(2, self.pokemons[1].moves[random.randint(0, 1)].get("Name"))
             
-            i += 1
+            elif option == 3: #Run away
+                print("Running away.")
+                input("\nPress enter to continue.")
+                clear()
+                return False
+            
+            return True
 
-
+    def battle_running(self, player, enemy):
+        while self.run_battle == True:
+            if not self.pokemons[0].alive:
+                self.pokemons[0] = next((poke for poke in player.pokemon_bag if poke.alive == True), None)
+                if self.pokemons[0] == None:
+                    self.loss()
+                    return
+            if isinstance(enemy, pokemon) and not self.pokemons[1].alive:
+                self.victory()
+                return
+            if not self.pokemons[1].alive:
+                self.pokemons[1] = next((poke for poke in enemy.pokemon_bag if poke.alive == True), None)
+                if self.pokemons[1] == None:
+                    self.victory()
+                    return
+            self.run_battle = self.battle_menu()
 
     def attack(self, attacker, move_name):
         i = 0 if attacker == 1 else 1
@@ -266,7 +269,11 @@ class battle():
         if multiplier < 1: print("\nIt's not very effective.")          
         input("\nPress enter to continue.")
         clear()
-        if self.pokemons[not i].hp <= 0: self.pokemons[not i].death()
+        if self.pokemons[not i].hp <= 0:
+            self.pokemons[not i].death()
+            return True # Return whether attack was lethal or not
+        
+        return False
     
     def __str__(self):
         string = "{0}\n{1}".format(self.pokemons[0], self.pokemons[1])
