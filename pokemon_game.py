@@ -6,7 +6,6 @@ import pandas as pd
 damage_df = pd.read_csv("damage_multiplier.csv")
 moves_df = pd.read_csv("move_sets.csv")
 pokemon_df = pd.read_csv("pokemon_data.csv")
-_DEBUG = True
 
 class move(): #Map and movements
     
