@@ -1,22 +1,6 @@
-import os, random
-import pandas as pd
+import random
 import pokemon, character, items
-clear = lambda: os.system('cls' if os.name=='nt' else 'clear')
-damage_df = pd.read_csv("damage_multiplier.csv")
-
-def input_number(length=1000):
-    number_str = input("\n\nEnter number: ")
-    try:
-        number_int = int(number_str)
-        if 0 < number_int <= length:
-            clear()
-            return number_int
-        else:
-            print (2 * "\033[A                             \033[A") #Delete previous line x2
-            return input_number(length)
-    except: 
-        print (2 * "\033[A                             \033[A") #Delete previous line x2
-        return input_number(length)
+from misc import input_number, clear, colors, damage_df
 
 class battle():
 
@@ -100,19 +84,37 @@ class battle():
             self.run_battle = self.battle_menu()
 
     def attack(self, attacker, move_name):
-        i = 0 if attacker == 1 else 1
+        i = attacker - 1
         
         move_dict = next(item for item in self.pokemons[i].moves if item["Name"] == move_name)
         move_dmg = move_dict.get("Power")
         move_type = move_dict.get("Type")
         multiplier = damage_df[(damage_df['Attacker'] == move_type) & (damage_df['Defender'] == self.pokemons[not i].type)]['Multiplier'].values[0]
-        damage = round(self.pokemons[i].attack * multiplier * move_dmg / 300 * random.uniform(0.8, 1.2))
+        if self.pokemons[not i].type2 != "": # For double type defenders
+            multiplier *= damage_df[(damage_df['Attacker'] == move_type) & (damage_df['Defender'] == self.pokemons[not i].type2)]['Multiplier'].values[0]
+            
+        #https://bulbapedia.bulbagarden.net/wiki/Damage
+        #level = (2 * self.pokemons[i].level / 5) + 2 Meter esto en vez de lo de abajo cuando haya niveles
+        level = 10
+        att_def = self.pokemons[i].attack / self.pokemons[not i].defense
+        weather = 1
+        critical = 1.5 if (random.uniform(0, 1) < 0.05) else 1
+        rand_factor = random.uniform(0.85, 1)
+        stab = 1.5 if (self.pokemons[i].type == move_type) else 1
+        damage = round(((level * att_def * move_dmg / 50) + 2) * weather * critical * rand_factor * stab * multiplier)
         self.pokemons[not i].hp -= damage          
-        print("{0.name} hits {1.name} with {2} for {3} points.".format(self.pokemons[i], self.pokemons[not i], move_name, damage))
-        if multiplier > 1: print("\nIt's super effective.")
-        if multiplier < 1: print("\nIt's not very effective.")          
+        print("{0.name} hits {1.name} with {2} for {3} damage.".format(self.pokemons[i], self.pokemons[not i], move_name, damage))
+        
+        if critical != 1: print (colors.RED+"\nA critical hit!"+colors.END)
+        if multiplier > 1:
+            print(colors.WHITE+"\nIt's super effective."+colors.END)
+        elif multiplier == 0:
+            print(colors.GREY+"\nIt had no effect."+colors.END)
+        elif multiplier < 1:
+            print(colors.GREY+"\nIt's not very effective."+colors.END)
         input("\nPress enter to continue.")
         clear()
+        
         if self.pokemons[not i].hp <= 0:
             self.pokemons[not i].death()
             return True # Return whether attack was lethal or not
@@ -122,3 +124,4 @@ class battle():
     def __str__(self):
         string = "{0}\n{1}".format(self.pokemons[0], self.pokemons[1])
         return string
+    

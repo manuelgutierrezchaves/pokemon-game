@@ -1,17 +1,15 @@
-import os
-import pandas as pd
-clear = lambda: os.system('cls' if os.name=='nt' else 'clear')
-pokemon_df = pd.read_csv("pokemon_data.csv")
-moves_df = pd.read_csv("move_sets.csv")
+from misc import clear, pokemon_df, moves_df
 
 class pokemon():
 
     def __init__(self, pokedex_number):
         self.name = pokemon_df["Name"].iloc[pokedex_number - 1]
         self.type = pokemon_df["Type 1"].iloc[pokedex_number - 1]
+        self.type2 = pokemon_df["Type 2"].iloc[pokedex_number - 1]
         self.max_hp = pokemon_df["HP"].iloc[pokedex_number - 1]
         self.hp = self.max_hp #Health points
-        self.attack = pokemon_df["Attack"].iloc[pokedex_number - 1]
+        self.attack = (pokemon_df["Attack"].iloc[pokedex_number - 1] + pokemon_df["Sp. Atk"].iloc[pokedex_number - 1]) / 2
+        self.defense = (pokemon_df["Defense"].iloc[pokedex_number - 1] + pokemon_df["Sp. Def"].iloc[pokedex_number - 1]) / 2
         self.speed = pokemon_df["Speed"].iloc[pokedex_number - 1]
         self.alive = True
         first_moves = moves_df.sample(2) # 2 random moves
@@ -49,3 +47,4 @@ class pokemon():
             print("{0.name}'s already alive.".format(self))
             input("\nPress enter to continue.")
             clear()
+            

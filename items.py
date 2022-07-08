@@ -1,19 +1,4 @@
-import os
-clear = lambda: os.system('cls' if os.name=='nt' else 'clear')
-
-def input_number(length=1000):
-    number_str = input("\n\nEnter number: ")
-    try:
-        number_int = int(number_str)
-        if 0 < number_int <= length:
-            clear()
-            return number_int
-        else:
-            print (2 * "\033[A                             \033[A") #Delete previous line x2
-            return input_number(length)
-    except: 
-        print (2 * "\033[A                             \033[A") #Delete previous line x2
-        return input_number(length)
+from misc import input_number, clear
 
 def item_menu(player):
     print("Inventory.\n")
@@ -35,5 +20,5 @@ def item_menu(player):
             user_pokemon = player.pokemon_bag[int(pokemon_number) - 1]
             if player.item_bag[int(item_number)-1]["Kind"] == "Heal": user_pokemon.feed(player.item_bag[int(item_number)-1]["HP"])
             if player.item_bag[int(item_number)-1]["Kind"] == "Revive": user_pokemon.revive(player.item_bag[int(item_number)-1]["% HP"])
-            return True
+            return True # Return whether item was used or not
     return False

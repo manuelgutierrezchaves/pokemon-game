@@ -1,27 +1,13 @@
-import os, random
+import random
 import battle, pokemon, character
-clear = lambda: os.system('cls' if os.name=='nt' else 'clear')
-
-def input_number(length=1000):
-    number_str = input("\n\nEnter number: ")
-    try:
-        number_int = int(number_str)
-        if 0 < number_int <= length:
-            clear()
-            return number_int
-        else:
-            print (2 * "\033[A                             \033[A") #Delete previous line x2
-            return input_number(length)
-    except: 
-        print (2 * "\033[A                             \033[A") #Delete previous line x2
-        return input_number(length)
+from misc import input_number, clear
 
 class move(): #Map and movements
     
     def __init__(self, player):
         self.full_map = [{"Name": "Pallet Town", "Activities": [], "Directions": ["Route 1"], "Wilds": [], "Shop": []},
                         {"Name": "Route 1", "Activities": ["Fight wild Pokemons"], "Directions": ["Viridian City", "Pallet Town"], "Wilds": [16, 19], "Shop": []},
-                        {"Name": "Viridian City", "Activities": ["Pokemon Center"], "Directions": ["Route 2", "Route 1"], "Wilds": [], "Shop": ["Potion", "Revive"]},
+                        {"Name": "Viridian City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 2", "Route 1"], "Wilds": [], "Shop": ["Potion", "Revive"]},
                         {"Name": "Route 2", "Activities": ["Fight wild Pokemons"], "Directions": ["Pewter City", "Viridian City"], "Wilds": [16, 19, 13, 10, 29, 32, 122], "Shop": []},
                         {"Name": "Pewter City", "Activities": ["Gym", "Pokemon Center"], "Directions": ["Route 3", "Route 2"], "Wilds": [], "Shop": ["Potion", "Super Potion", "Revive"]},
                         {"Name": "Route 3", "Activities": ["Fight wild Pokemons"], "Directions": ["Pewter City"], "Wilds": [16, 19, 13, 10, 29, 32, 122], "Shop": []}]
@@ -105,3 +91,4 @@ class move(): #Map and movements
         item_number = input_number(len(self.items_sold))
         item = self.items_sold[item_number-1]
         self.player.add_item(item)
+        

@@ -1,6 +1,5 @@
-import os
 import pokemon
-clear = lambda: os.system('cls' if os.name=='nt' else 'clear')
+from misc import clear
 
 class character():
 
@@ -28,6 +27,7 @@ class character():
         self.item_bag[idx]["Quantity"] = self.item_bag[idx].get("Quantity") + 1
 
     def show_pokemons(self):
-        for poke in self.pokemon_bag: print(f"{poke.name}\t\tType: {poke.type}\tAttack: {poke.attack}\tHP: {poke.hp}/{poke.max_hp}\tMoves: {poke.moves[0].get('Name')} & {poke.moves[1].get('Name')}")
+        for poke in self.pokemon_bag: print("{:<15s} {:<15s} {:<15s} {:<15s} {}".format(f"{poke.name}",f"Type: {poke.type}",f"Attack: {poke.attack}",f"HP: {poke.hp}/{poke.max_hp}",f"Moves: {poke.moves[0].get('Name')} & {poke.moves[1].get('Name')}"))
         print("")
-        for item in self.item_bag: print(f"{item.get('Item')}\t\tKind: {item.get('Kind')}\t\Quantity: {item.get('Quantity')}")
+        for item in self.item_bag: print("{:<15s} {:<15s} {:<15s}".format(f"{item.get('Item')}",f"Kind: {item.get('Kind')}",f"Quantity: {item.get('Quantity')}"))
+        
