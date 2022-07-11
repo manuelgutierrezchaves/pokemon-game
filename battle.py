@@ -43,14 +43,14 @@ class battle():
                         lethal = self.attack(1, self.pokemons[0].moves[option_move_name - 1].get("Name"))
                         if not lethal: self.attack(2, self.pokemons[1].moves[random.randint(0, 1)].get("Name"))
                     elif (self.pokemons[0].speed < self.pokemons[1].speed):
-                        lethal: self.attack(2, self.pokemons[1].moves[random.randint(0, 1)].get("Name"))
+                        lethal = self.attack(2, self.pokemons[1].moves[random.randint(0, 1)].get("Name"))
                         if not lethal: self.attack(1, self.pokemons[0].moves[option_move_name - 1].get("Name"))
                     else: # Speed tie
                         if (random.randint(0, 1)) == 1:
-                            lethal: self.attack(1, self.pokemons[0].moves[option_move_name - 1].get("Name"))
+                            lethal = self.attack(1, self.pokemons[0].moves[option_move_name - 1].get("Name"))
                             if not lethal: self.attack(2, self.pokemons[1].moves[random.randint(0, 1)].get("Name"))
                         else: 
-                            lethal: self.attack(2, self.pokemons[1].moves[random.randint(0, 1)].get("Name"))
+                            lethal = self.attack(2, self.pokemons[1].moves[random.randint(0, 1)].get("Name"))
                             if not lethal: self.attack(1, self.pokemons[0].moves[option_move_name - 1].get("Name"))
             
             elif option == 2: #Items
